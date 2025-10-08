@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "168523259412",
+    "project_id": "carzeel-mn",
+    "storage_bucket": "carzeel-mn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168523259412:android:57f83b506a0a7fbef5d101",
+        "android_client_info": {
+          "package_name": "mn.everestsolution.carzeel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByH-QD8aN6BIahJNaR5hX-5emPAJlg430"
+        },
+        {
+          "current_key": "AIzaSyA-XLN-uuHfWGHeo5dnwbms7ZJ66E1ajds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:168523259412:android:743cd0c5b0bad87ff5d101",
+        "android_client_info": {
+          "package_name": "mn.everestsolution.mn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyByH-QD8aN6BIahJNaR5hX-5emPAJlg430"
+        },
+        {
+          "current_key": "AIzaSyA-XLN-uuHfWGHeo5dnwbms7ZJ66E1ajds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18" height="18" viewBox="0 0 18 18">
+  <defs>
+    <clipPath id="clip-path">
+      <rect id="Rectangle_13760" data-name="Rectangle 13760" width="18" height="18" transform="translate(-0.334 -0.334)" fill="#9C4FDD"/>
+    </clipPath>
+  </defs>
+  <g id="Group_29140" data-name="Group 29140" transform="translate(0.334 0.334)">
+    <rect id="Rectangle_13758" data-name="Rectangle 13758" width="2.031" height="5.146" transform="translate(9.174 10.156)" fill="#9C4FDD"/>
+    <rect id="Rectangle_13759" data-name="Rectangle 13759" width="2.031" height="5.146" transform="translate(6.127 10.156)" fill="#9C4FDD"/>
+    <g id="Group_29135" data-name="Group 29135" transform="translate(0 0)">
+      <g id="Group_29134" data-name="Group 29134" clip-path="url(#clip-path)">
+        <path id="Path_47622" data-name="Path 47622" d="M16.512,11.953a.508.508,0,1,0,.508.508.508.508,0,0,0-.508-.508" transform="translate(-7.846 -5.86)" fill="#9C4FDD"/>
+      </g>
+    </g>
+    <g id="Group_29137" data-name="Group 29137" transform="translate(0 0)">
+      <g id="Group_29136" data-name="Group 29136" clip-path="url(#clip-path)">
+        <path id="Path_47623" data-name="Path 47623" d="M16.824,17.846H15.3V12.4L8.666,7.262l-6.6,5.108v5.476H.508a.508.508,0,0,0,0,1.015h4.6V13.208a.508.508,0,0,1,.508-.508h6.094a.508.508,0,0,1,.508.508v5.653h4.6a.508.508,0,0,0,0-1.015M8.666,11.685a1.523,1.523,0,1,1,1.523-1.523,1.525,1.525,0,0,1-1.523,1.523" transform="translate(0 -3.56)" fill="#9C4FDD"/>
+        <path id="Path_47624" data-name="Path 47624" d="M17.123,6.393,8.966.1a.51.51,0,0,0-.6,0L.208,6.393A.507.507,0,0,0,.1,7.109l.61.813a.509.509,0,0,0,.705.106l7.249-5.61,7.249,5.609a.508.508,0,0,0,.705-.106l.61-.813a.508.508,0,0,0-.107-.715" transform="translate(0 0)" fill="#9C4FDD"/>
+      </g>
+    </g>
+    <g id="Group_29139" data-name="Group 29139" transform="translate(0 0)">
+      <g id="Group_29138" data-name="Group 29138" clip-path="url(#clip-path)">
+        <path id="Path_47625" data-name="Path 47625" d="M4.559,1.992a.508.508,0,0,0-.508.508V4.681L6.068,3.11,6.082,3.1V2.5a.508.508,0,0,0-.508-.508Z" transform="translate(-1.986 -0.977)" fill="#9C4FDD"/>
+        <path id="Path_47626" data-name="Path 47626" d="M8.088,32.288a.508.508,0,0,0,.454.735h8.125a.508.508,0,0,0,.454-.735l-.141-.28H8.229Z" transform="translate(-3.939 -15.691)" fill="#9C4FDD"/>
+      </g>
+    </g>
+  </g>
+</svg>

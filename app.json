@@ -1,48 +1,119 @@
 {
   "expo": {
-    "name": "eleasing",
-    "slug": "eleasing",
+    "name": "CAR zeel",
+    "slug": "carzeel",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "eleasing",
+    "scheme": "carzeel",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "icon": "./assets/images/icon-ios.png",
+      "bundleIdentifier": "mn.everestsolution.carzeel",
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "aps-environment": "production"
+      },
+      "config": {
+        "googleMapsApiKey": "AIzaSyAa6wN0E7S-HmRsMUx9HjwWuQs-X3uX99A"
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
-        "monochromeImage": "./assets/images/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/icon-android.png",
+        "backgroundColor": "#0D0E13"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "googleServicesFile": "./google-services.json",
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyA-XLN-uuHfWGHeo5dnwbms7ZJ66E1ajds"
+        }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.USE_BIOMETRIC",
+        "android.permission.USE_FINGERPRINT",
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.WRITE_SETTINGS"
+      ],
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
+      "package": "mn.everestsolution.carzeel"
     },
     "web": {
+      "bundler": "metro",
       "output": "static",
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "backgroundColor": "#08293E"
         }
-      ]
+      ],
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Face ID ашиглах эрхийг нээнэ үү."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Нүүрний танин баталгаажуулалт хийхийн тулд камерын хандалт шаардлагатай",
+          "microphonePermission": "Нүүрний танин баталгаажуулалт хийхийн тулд микрофоны хандалт шаардлагатай",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Машины зураг авахын тулд зураг авах эрхийг зөвшөөрнө үү",
+          "cameraPermission": "Машины зураг авахын тулд камераа ашиглах эрхийг зөвшөөрнө үү",
+          "microphonePermission": "Машины зураг авахын тулд микрофон ашиглах эрхийг зөвшөөрнө үү"
+        }
+      ],
+      "expo-font",
+      "expo-web-browser",
+      "expo-brightness"
     ],
     "experiments": {
-      "typedRoutes": true,
-      "reactCompiler": true
-    }
+      "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "da267f19-5dfc-4600-8617-056981786ad4"
+      }
+    },
+    "owner": "everestsolution"
   }
 }
