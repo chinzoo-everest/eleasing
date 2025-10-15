@@ -1,12 +1,12 @@
-import {cn} from '@utils/cn';
-import React, {forwardRef, useRef} from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
-import {Dropdown, IDropdownRef} from 'react-native-element-dropdown';
+import { cn } from "@utils/cn";
+import React, { forwardRef, useRef } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { Dropdown, IDropdownRef } from "react-native-element-dropdown";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-} from 'react-native-reanimated';
+} from "react-native-reanimated";
 // Component implementation
 type Props = {
   title?: string;
@@ -34,23 +34,23 @@ const SettingsDropdown = forwardRef<any, Props>(
       errorString,
       className,
       selectedValue,
-      labelName = 'TITLE',
-      valueName = 'ID',
+      labelName = "TITLE",
+      valueName = "ID",
       onChange,
       disabled,
       ...props
     },
-    ref,
+    ref
   ) => {
     const dropDownRef = useRef<IDropdownRef>(null);
     const isFocused = useSharedValue(0);
 
     const borderAnimatedStyle = useAnimatedStyle(() => {
       return {
-        borderWidth: withTiming(isFocused.value ? 2 : 1, {duration: 200}),
+        borderWidth: withTiming(isFocused.value ? 2 : 1, { duration: 200 }),
         borderColor: withTiming(
-          isFocused.value ? focusColor || '#6265FE' : '#FFFFFF99',
-          {duration: 200},
+          isFocused.value ? focusColor || "#6265FE" : "#FFFFFF99",
+          { duration: 200 }
         ),
       };
     });
@@ -59,9 +59,10 @@ const SettingsDropdown = forwardRef<any, Props>(
       <TouchableOpacity
         onPress={() => dropDownRef.current?.open()}
         {...props}
-        ref={ref}>
+        ref={ref}
+      >
         {title && (
-          <Text className={cn('mb-1.5 text-sm text-white')}>{title}</Text>
+          <Text className={cn("mb-1.5 text-sm text-white")}>{title}</Text>
         )}
         <Animated.View
           style={[
@@ -69,12 +70,13 @@ const SettingsDropdown = forwardRef<any, Props>(
             {
               borderRadius: 8,
               height: 50,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              backgroundColor: backgroundColor || '#24292D',
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: backgroundColor || "#24292D",
             },
-          ]}>
+          ]}
+        >
           <Dropdown
             ref={dropDownRef}
             disable={disabled}
@@ -85,9 +87,10 @@ const SettingsDropdown = forwardRef<any, Props>(
               return (
                 <View
                   className={cn(
-                    'flex-row items-center justify-between rounded-lg p-2.5',
-                    selected ? 'bg-[#2A2C33]' : 'bg-transparent',
-                  )}>
+                    "flex-row items-center justify-between rounded-lg p-2.5",
+                    selected ? "bg-[#2A2C33]" : "bg-transparent"
+                  )}
+                >
                   <Text className="text-base text-white">
                     {item[labelName]}
                   </Text>
@@ -96,38 +99,40 @@ const SettingsDropdown = forwardRef<any, Props>(
             }}
             style={{
               flex: 1,
-              backgroundColor: backgroundColor || '#24292D',
+              backgroundColor: backgroundColor || "#24292D",
             }}
-            iconStyle={{marginRight: 15}}
+            iconStyle={{ marginRight: 15 }}
             selectedTextStyle={{
-              textAlign: 'left',
+              textAlign: "left",
               fontSize: 16,
               paddingHorizontal: 15,
-              color: '#ffffff',
-              backgroundColor: backgroundColor || '#24292D',
+              color: "#ffffff",
+              backgroundColor: backgroundColor || "#24292D",
             }}
             itemTextStyle={{
-              textAlign: 'left',
+              textAlign: "left",
               fontSize: 16,
-              color: '#ffffff',
+              color: "#ffffff",
             }}
             containerStyle={{
-              width: '90%',
+              width: "90%",
               borderRadius: 8,
-              backgroundColor: backgroundColor || '#24292D',
+              backgroundColor: backgroundColor || "#24292D",
             }}
             itemContainerStyle={{
               borderRadius: 8,
               margin: 2,
-              backgroundColor: 'transparent',
+              backgroundColor: "transparent",
             }}
             data={items}
             labelField={labelName}
             valueField={valueName}
             value={
-              items.find(item => item[valueName] === selectedValue)?.[valueName]
+              items.find((item) => item[valueName] === selectedValue)?.[
+                valueName
+              ]
             }
-            onChange={item => {
+            onChange={(item) => {
               onChange(item[valueName]);
               isFocused.value = 1;
             }}
@@ -140,8 +145,8 @@ const SettingsDropdown = forwardRef<any, Props>(
         </Text>
       </TouchableOpacity>
     );
-  },
+  }
 );
 
 export default SettingsDropdown;
-SettingsDropdown.displayName = 'SettingsDropdown';
+SettingsDropdown.displayName = "SettingsDropdown";

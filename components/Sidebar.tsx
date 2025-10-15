@@ -9,6 +9,7 @@ import {
   Dimensions,
   Pressable,
   ScrollView,
+  Modal,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SvgIcon from "@components/SvgIcon";
@@ -50,7 +51,7 @@ const Sidebar = ({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [visible]);
+  }, [visible, slideAnim, fadeAnim]);
 
   const handleNavigate = useCallback(
     async (screen: string) => {
@@ -60,129 +61,130 @@ const Sidebar = ({
     [onClose]
   );
 
-  if (!visible && fadeAnim.__getValue() === 0) return null;
-
   return (
-    <Animated.View
-      className="absolute inset-0 z-50"
-      style={{ opacity: fadeAnim }}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      onRequestClose={onClose}
     >
-      <Pressable onPress={onClose} className="absolute inset-0 bg-black/40" />
+      <Animated.View className="flex-1" style={{ opacity: fadeAnim }}>
+        <Pressable onPress={onClose} className="absolute inset-0 bg-black/40" />
 
-      <Animated.View
-        className="absolute inset-y-0 left-0 shadow-lg"
-        style={{
-          transform: [{ translateX: slideAnim }],
-          width: width * 0.78,
-          borderTopRightRadius: 20,
-          borderBottomRightRadius: 20,
-          overflow: "hidden",
-        }}
-      >
-        {/* Header */}
-        <View
-          className="bg-[#2A45C4] flex-row pl-10 pb-4"
-          style={{ paddingTop: insets.top }}
+        <Animated.View
+          className="absolute inset-y-0 left-0 shadow-lg"
+          style={{
+            transform: [{ translateX: slideAnim }],
+            width: width * 0.78,
+            borderTopRightRadius: 20,
+            borderBottomRightRadius: 20,
+            overflow: "hidden",
+          }}
         >
-          <View className="mr-5">
-            {currentCustomer?.AVATAR_URL ? (
-              <Image
-                source={{ uri: currentCustomer?.AVATAR_URL }}
-                className="h-16 w-16"
-              />
-            ) : (
-              <SvgIcon
-                name="settings_user"
-                height={63}
-                width={63}
-                color="#1E3AFF"
-              />
-            )}
-          </View>
-          <View className="flex-col self-center">
-            <Text className="text-white/80 text-base">Сайн байна уу!</Text>
-            <Text className="text-white text-lg font-semibold">
-              {currentCustomer?.FIRST_NAME || ""}{" "}
-              {currentCustomer?.LAST_NAME || ""}
-            </Text>
-          </View>
-        </View>
-
-        {/* Body */}
-        <View className="flex-1 bg-white ">
-          <ScrollView
-            contentContainerStyle={{ paddingVertical: 10 }}
-            showsVerticalScrollIndicator={false}
+          {/* Header */}
+          <View
+            className="bg-[#2A45C4] flex-row pl-10 pb-4"
+            style={{ paddingTop: insets.top }}
           >
-            <View className="px-10 py-6">
-              <SidebarItem
-                icon="archive"
-                text="Зээлийн архив"
-                onPress={() => handleNavigate(SCREENS.LOAN_ARCHIVE)}
-              />
-              <SidebarItem
-                icon="faq"
-                text="Асуулт хариулт"
-                onPress={() => handleNavigate(SCREENS.FAQ)}
-              />
-              <SidebarItem
-                icon="calculator"
-                text="Зээлийн тооцоолуур"
-                onPress={() => handleNavigate(SCREENS.LOAN_CALCULATOR)}
-              />
-              <SidebarItem
-                icon="terms"
-                text="Үйлчилгээний нөхцөл"
-                onPress={() => handleNavigate(SCREENS.TERMS)}
-              />
-              <SidebarItem
-                icon="location"
-                text="Салбарын байршил"
-                onPress={() => handleNavigate(SCREENS.MAP)}
-              />
-              <SidebarItem
-                icon="operator"
-                text="Оператортой холбогдох"
-                onPress={() =>
-                  Linking.openURL(
-                    `tel:${context?.state.configData?.customerPhoneNo}`
-                  )
-                }
-              />
-              <SidebarItem
-                icon="facebook"
-                text="Фэйсбүүк"
-                onPress={() => Linking.openURL("https://facebook.com")}
-              />
-              <SidebarItem
-                icon="email"
-                text="И-мэйл"
-                onPress={() => Linking.openURL("mailto:support@example.com")}
-              />
+            <View className="mr-5">
+              {currentCustomer?.AVATAR_URL ? (
+                <Image
+                  source={{ uri: currentCustomer?.AVATAR_URL }}
+                  className="h-16 w-16"
+                />
+              ) : (
+                <SvgIcon
+                  name="settings_user"
+                  height={63}
+                  width={63}
+                  color="#1E3AFF"
+                />
+              )}
             </View>
-
-            {/* Logout */}
-            <View className="mt-10pt-4 px-5 pb-8">
-              <Text className="text-gray-600 mb-3 text-xs text-center">
-                Та системээс гарахдаа итгэлтэй байна уу?
+            <View className="flex-col self-center">
+              <Text className="text-white/80 text-base">Сайн байна уу!</Text>
+              <Text className="text-white text-lg font-semibold">
+                {currentCustomer?.FIRST_NAME || ""}{" "}
+                {currentCustomer?.LAST_NAME || ""}
               </Text>
-
-              <TouchableOpacity
-                onPress={() => LogOutUser()}
-                className="flex-row items-start justify-start border border-[#E9E9ED]  rounded-full "
-              >
-                <View className="bg-[#2A45C4] p-5 rounded-3xl">
-                  <SvgIcon name="exit" height={22} width={22} />
-                </View>
-                <Text className="text-[#131A43] font-medium text-base self-center ml-5">
-                  Гарах
-                </Text>
-              </TouchableOpacity>
             </View>
-          </ScrollView>
-        </View>
+          </View>
+
+          {/* Body */}
+          <View className="flex-1 bg-white">
+            <ScrollView
+              contentContainerStyle={{ paddingVertical: 10 }}
+              showsVerticalScrollIndicator={false}
+            >
+              <View className="px-10 py-6">
+                <SidebarItem
+                  icon="archive"
+                  text="Зээлийн архив"
+                  onPress={() => handleNavigate(SCREENS.LOAN_ARCHIVE)}
+                />
+                <SidebarItem
+                  icon="faq"
+                  text="Асуулт хариулт"
+                  onPress={() => handleNavigate(SCREENS.FAQ)}
+                />
+                <SidebarItem
+                  icon="calculator"
+                  text="Зээлийн тооцоолуур"
+                  onPress={() => handleNavigate(SCREENS.LOAN_CALCULATOR)}
+                />
+                <SidebarItem
+                  icon="terms"
+                  text="Үйлчилгээний нөхцөл"
+                  onPress={() => handleNavigate(SCREENS.TERMS)}
+                />
+                <SidebarItem
+                  icon="location"
+                  text="Салбарын байршил"
+                  onPress={() => handleNavigate(SCREENS.MAP)}
+                />
+                <SidebarItem
+                  icon="operator"
+                  text="Оператортой холбогдох"
+                  onPress={() =>
+                    Linking.openURL(
+                      `tel:${context?.state.configData?.customerPhoneNo}`
+                    )
+                  }
+                />
+                <SidebarItem
+                  icon="facebook"
+                  text="Фэйсбүүк"
+                  onPress={() => Linking.openURL("https://facebook.com")}
+                />
+                <SidebarItem
+                  icon="email"
+                  text="И-мэйл"
+                  onPress={() => Linking.openURL("mailto:support@example.com")}
+                />
+              </View>
+
+              {/* Logout */}
+              <View className="mt-10 px-5 pb-8">
+                <Text className="text-gray-600 mb-3 text-xs text-center">
+                  Та системээс гарахдаа итгэлтэй байна уу?
+                </Text>
+                <TouchableOpacity
+                  onPress={() => LogOutUser()}
+                  className="flex-row items-start justify-start border border-[#E9E9ED] rounded-full "
+                >
+                  <View className="bg-[#2A45C4] p-5 rounded-3xl">
+                    <SvgIcon name="exit" height={22} width={22} />
+                  </View>
+                  <Text className="text-[#131A43] font-medium text-base self-center ml-5">
+                    Гарах
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        </Animated.View>
       </Animated.View>
-    </Animated.View>
+    </Modal>
   );
 };
 

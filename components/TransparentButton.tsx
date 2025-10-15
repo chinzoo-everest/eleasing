@@ -1,5 +1,5 @@
-import React from 'react';
-import {Text, TouchableOpacity} from 'react-native';
+import React from "react";
+import { Text, TouchableOpacity } from "react-native";
 
 type Props = {
   text?: string;
@@ -10,19 +10,20 @@ type Props = {
 
 const TransparentButton = ({
   text,
-  textColor = '#6265FE',
+  textColor = "#fff",
   disabled = false,
   onPress,
 }: Props) => {
   return (
     <TouchableOpacity disabled={disabled} onPress={onPress}>
       <Text
-        className="text-xs"
+        className="text-base"
         style={{
           color: textColor,
-          fontFamily: 'PlayRegular',
+          fontFamily: "PlayRegular",
           letterSpacing: -0.75,
-        }}>
+        }}
+      >
         {text}
       </Text>
     </TouchableOpacity>
