@@ -65,7 +65,7 @@ const ChangePhone = () => {
       <Header
         title="Утасны дугаар солих"
         onBack={() => router.back()}
-        bgColor="black"
+        bgColor="white"
         textColor="#1B3C69"
         showBottomLine={false}
       />

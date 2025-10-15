@@ -41,11 +41,13 @@ const MyInfo = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#F7F7F7]" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-[#fff]" style={{ paddingTop: insets.top }}>
       <Header
         title="Хувийн тохиргоо"
         onBack={() => router.back()}
-        bgColor="#24292D"
+        bgColor="#fff"
+        textColor="#1B3C69"
+        showBottomLine={false}
       />
 
       <CustomScrollView className="flex-1   pt-6 px-7">

@@ -1,21 +1,21 @@
-import React, {useCallback, useEffect, useState} from 'react';
-import MapView, {Marker} from 'react-native-maps';
-import {TouchableOpacity, View, Image, Text, ScrollView} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import Header from '@components/Header';
-import {router} from 'expo-router';
-import {CBranch} from '@type/interfaces/Basic';
-import {getBranchList} from '@services/api/basic';
-import {checkResponse} from '@utils/checkResponse';
-import {showToast} from '@utils/showToast';
-import {handleErrorExpo} from '@utils/handleErrorOnExpo';
-import BranchCard from '@components/BranchCard';
+import React, { useCallback, useEffect, useState } from "react";
+import MapView, { Marker } from "react-native-maps";
+import { TouchableOpacity, View, Image, Text, ScrollView } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Header from "@components/Header";
+import { router } from "expo-router";
+import { CBranch } from "@type/interfaces/Basic";
+import { getBranchList } from "@services/api/basic";
+import { checkResponse } from "@utils/checkResponse";
+import { showToast } from "@utils/showToast";
+import { handleErrorExpo } from "@utils/handleErrorOnExpo";
+import BranchCard from "@components/BranchCard";
 
 export default function Map() {
   const insets = useSafeAreaInsets();
   const [branches, setBranches] = useState<CBranch[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [layout, setLayout] = useState<string>('map');
+  const [layout, setLayout] = useState<string>("map");
   const [region, setRegion] = useState({
     latitude: 47.9221,
     longitude: 106.9155,
@@ -29,7 +29,7 @@ export default function Map() {
       latitudeDelta: 0.003,
       longitudeDelta: 0.003,
     });
-    handleLayoutChange('map');
+    handleLayoutChange("map");
   };
   const loadBranches = useCallback(async () => {
     if (isSubmitting || branches.length > 0) return;
@@ -42,7 +42,7 @@ export default function Map() {
         (branch: any, index: number) => ({
           ...branch,
           INDEX: index + 1,
-        }),
+        })
       );
       setBranches(newBranches);
       if (newBranches.length > 0) {
@@ -53,10 +53,10 @@ export default function Map() {
           longitudeDelta: 0.003,
         });
       } else {
-        showToast('Анхааруулга', 'Салбарын байршил олдсонгүй.', 'error');
+        showToast("Анхааруулга", "Салбарын байршил олдсонгүй.", "error");
       }
     } catch (error) {
-      handleErrorExpo(error, 'loadBranches');
+      handleErrorExpo(error, "loadBranches");
     } finally {
       setIsSubmitting(false);
     }
@@ -71,38 +71,44 @@ export default function Map() {
   }, [loadBranches]);
 
   return (
-    <View className="flex-1 bg-bgPrimary" style={{paddingTop: insets.top}}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <Header
         title="Салбарын байршил"
         onBack={() => router.back()}
         showBottomLine={false}
-        bgColor="#24292D"
+        textColor="[#1B3C69]"
+        bgColor="#fff"
       />
-      <View className="mx-4 mt-4 flex-row rounded-full bg-bgLight">
+      <View className="mx-4 mt-4 flex-row rounded-full bg-white">
         <TouchableOpacity
-          className={`flex-1 items-center justify-center py-3 ${layout === 'map' ? 'm-1 rounded-full bg-Primary' : ''}`}
-          onPress={() => handleLayoutChange('map')}>
+          className={`flex-1 items-center justify-center py-3 ${layout === "map" ? " rounded-full bg-[#2A45C4]" : ""}`}
+          onPress={() => handleLayoutChange("map")}
+        >
           <Text
-            className={`font-Inter text-md ${layout === 'map' ? 'text-white' : 'text-white opacity-50'}`}>
+            className={`font-Inter text-md  font-bold ${layout === "map" ? "text-white" : "text-[#1B3C69] opacity-50"}`}
+          >
             Газрын зураг
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          className={`flex-1 items-center justify-center py-3 ${layout === 'list' ? 'm-1 rounded-full bg-Primary' : ''}`}
-          onPress={() => handleLayoutChange('list')}>
+          className={`flex-1 items-center justify-center py-3 ${layout === "list" ? "rounded-full bg-[#2A45C4]" : ""}`}
+          onPress={() => handleLayoutChange("list")}
+        >
           <Text
-            className={`font-Inter text-md ${layout === 'list' ? 'text-white' : 'text-white opacity-50'}`}>
+            className={`font-Inter text-md font-bold ${layout === "list" ? "text-white" : "text-[#1B3C69] opacity-50"}`}
+          >
             Жагсаалтаар
           </Text>
         </TouchableOpacity>
       </View>
 
-      {layout === 'map' ? (
+      {layout === "map" ? (
         <MapView
-          style={{flex: 1, marginTop: 20}}
+          style={{ flex: 1, marginTop: 20 }}
           region={region}
-          onRegionChangeComplete={setRegion}>
-          {branches.map(branch => (
+          onRegionChangeComplete={setRegion}
+        >
+          {branches.map((branch) => (
             <Marker
               key={branch.INDEX}
               coordinate={{
@@ -110,10 +116,11 @@ export default function Map() {
                 longitude: parseFloat(branch.LON.toString()),
               }}
               title={branch.NAME}
-              description={branch.ADDR}>
+              description={branch.ADDR}
+            >
               <Image
-                source={require('@assets/images/branch_pin.png')}
-                style={{width: 25, height: 25}}
+                source={require("@assets/images/branch_pin.png")}
+                style={{ width: 25, height: 25 }}
                 resizeMode="contain"
               />
             </Marker>
@@ -122,7 +129,7 @@ export default function Map() {
       ) : (
         <ScrollView className="flex-1 px-4 pt-5">
           {branches.length > 0 ? (
-            branches.map(branch => (
+            branches.map((branch) => (
               <BranchCard
                 key={branch.INDEX}
                 branch={branch}

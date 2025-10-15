@@ -1,13 +1,13 @@
-import {cn} from '@utils/cn';
-import React, {useState} from 'react';
+import { cn } from "@utils/cn";
+import React, { useState } from "react";
 import {
   KeyboardTypeOptions,
   Text,
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import SvgIcon from './SvgIcon';
+} from "react-native";
+import SvgIcon from "./SvgIcon";
 
 type Props = {
   value?: string;
@@ -25,13 +25,13 @@ type Props = {
 
 const Input = ({
   value,
-  placeholder = '...',
+  placeholder = "...",
   mode,
-  errorString = '',
-  keyboard = 'default',
+  errorString = "",
+  keyboard = "default",
   maxLength,
   readonly = false,
-  placeHolderColor = '#abb0b0',
+  placeHolderColor = "#abb0b0",
   customBorderColor,
   onChangeText,
   onEndEditing,
@@ -41,10 +41,11 @@ const Input = ({
   return (
     <View>
       <View
-        className="flex h-14 w-full flex-row items-center rounded-xl border bg-bgPrimary px-4"
+        className="flex h-14 w-full flex-row items-center  border bg-[#001165] px-4"
         style={{
-          borderColor: customBorderColor || '#A45AE1',
-        }}>
+          borderColor: customBorderColor || "#A45AE1",
+        }}
+      >
         <TextInput
           value={value}
           placeholder={placeholder}
@@ -56,16 +57,17 @@ const Input = ({
           editable={!readonly}
           placeholderClassName="translate-y-2"
           className={cn(
-            'mb-1 h-14 flex-1 font-[PlayRegular] text-base text-[#ffffff]',
+            "mb-1 h-14 flex-1 font-[PlayRegular] text-base text-[#ffffff]"
           )}
-          secureTextEntry={mode === 'password' && !isShowPassIcon}
+          secureTextEntry={mode === "password" && !isShowPassIcon}
           placeholderTextColor={placeHolderColor}
         />
 
-        {mode === 'password' && (
+        {mode === "password" && (
           <TouchableOpacity
             onPress={() => setIsShowPassIcon(!isShowPassIcon)}
-            className="absolute right-2 p-2.5">
+            className="absolute right-2 p-2.5"
+          >
             {isShowPassIcon ? (
               <SvgIcon name="auth_hidepass" />
             ) : (

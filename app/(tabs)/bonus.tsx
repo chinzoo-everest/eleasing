@@ -1,210 +1,129 @@
-import {useGlobalContext} from '@hooks/useGlobalContext';
+// screens/BonusScreen.tsx (or wherever your current BonusScreen lives)
+import React, { useCallback, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  BackHandler,
+  Linking,
+  Platform,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { WebView } from "react-native-webview";
+import Header from "@components/Header";
+import SvgIcon from "@components/SvgIcon";
 
-import {useFocusEffect} from '@react-navigation/native';
-import {loadBonusRequest} from '@services/basic.service';
-import {loadCustomerData} from '@services/home.service';
-import {CCustomer, CCustProd} from '@type/interfaces/Customer';
+const HOME_MARKET_URL = "https://pc-mall.mn/";
 
-import {handleErrorExpo} from '@utils/handleErrorOnExpo';
-import {showToast} from '@utils/showToast';
-import React, {useCallback, useState} from 'react';
-import {Dimensions, Text, View} from 'react-native';
+const isSameDomain = (url: string) => {
+  try {
+    const u = new URL(url);
+    return u.hostname.endsWith("pc-mall.mn");
+  } catch {
+    return false;
+  }
+};
 
-const BonusScreen = ({navigation}: any) => {
-  const {dispatch, state} = useGlobalContext();
-  const windowWidth = Dimensions.get('window').width;
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [custProd, setCustProd] = useState<CCustProd[]>([]);
-  const [currentItem, setCurrentItem] = useState<CCustProd>();
-  const [currentCustomer, setCurrentCustomer] = useState<CCustomer>();
-  const [isConfirmationVisible, setIsConfirmationVisible] = useState(false);
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [buttonOnPress, setButtonOnPress] = useState<() => void>();
+const BonusScreen = () => {
+  const insets = useSafeAreaInsets();
+  const webRef = useRef<WebView>(null);
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [webError, setWebError] = useState<string | null>(null);
 
-  const loadData = useCallback(async () => {
-    try {
-      if (isSubmitting) return;
-      setIsSubmitting(true);
-      setCustProd([]);
-      const result = await loadCustomerData(dispatch);
-      if (result?.customer) {
-        setCurrentCustomer(result.customer);
-      }
-      if (result?.cust_prod) {
-        setCustProd(result.cust_prod.filter(item => item.USE_BONUS === 'Y'));
-        setCurrentItem(result.cust_prod[0]);
-      }
-    } catch (error) {
-      handleErrorExpo(error, 'loadData');
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [dispatch]);
+  // Reload helper
+  const handleReload = useCallback(() => {
+    setWebError(null);
+    webRef.current?.reload();
+  }, []);
 
+  // Hardware back: go back inside WebView first
   useFocusEffect(
     useCallback(() => {
-      loadData();
-    }, [loadData]),
+      const onBackPress = () => {
+        if (canGoBack) {
+          webRef.current?.goBack();
+          return true;
+        }
+        return false; // let navigator pop the screen
+      };
+      BackHandler.addEventListener("hardwareBackPress", onBackPress);
+    }, [canGoBack])
   );
 
-  const handleIncreaseAmt = () => {
-    const config = state.comboValue.bonus_config.find(
-      item => item.B_TYPE === 'INC_LOAN',
-    );
-    if (!config) {
-      showToast('', 'Тохиргоо олдсонгүй', 'error');
-      return;
-    }
-    if (currentCustomer?.BONUS === undefined || config.BONUS === undefined) {
-      showToast(
-        '',
-        'Бонус оноо эсвэл тохиргооны мэдээлэл дутуу байна',
-        'error',
-      );
-      return;
-    }
-    if (currentCustomer.BONUS < config.BONUS) {
-      showToast('', 'Бонус оноо хүрэлцэхгүй байна', 'error');
-      return;
-    }
-
-    setTitle('');
-    setDescription(
-      `Та ${config.BONUS} бонус оноо ашиглан зээлийн эрхээ ${config.AMT} ₮-өөр нэмэгдүүлэх үү ?`,
-    );
-    setButtonOnPress(() => proceedIncrease);
-    setIsConfirmationVisible(true);
-  };
-
-  const proceedIncrease = async () => {
-    setIsConfirmationVisible(false);
-    try {
-      setIsSubmitting(true);
-      const result = await loadBonusRequest(
-        (currentItem?.ID || 0).toString(),
-        'INC_LOAN',
-      );
-      if (result) {
-        showToast('Таны зээлийн эрх амжилттай нэмэгдлээ');
-        await loadData();
-      }
-    } catch (error) {
-      handleErrorExpo(error, 'proceedIncrease');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleDecreaseInterest = () => {
-    const config = state.comboValue.bonus_config.find(
-      item => item.B_TYPE === 'DEC_INT',
-    );
-    if (!config) {
-      showToast('', 'Тохиргоо олдсонгүй', 'error');
-      return;
-    }
-    if (currentCustomer?.BONUS === undefined || config.BONUS === undefined) {
-      showToast(
-        '',
-        'Бонус оноо эсвэл тохиргооны мэдээлэл дутуу байна',
-        'error',
-      );
-      return;
-    }
-    if (currentCustomer.BONUS < config.BONUS) {
-      showToast('', 'Бонус оноо хүрэлцэхгүй байна', 'error');
-      return;
-    }
-
-    setTitle('');
-    setDescription(
-      `Та зээлийн хүүгээ ${config.BONUS} бонус оноо ашиглан ${config.AMT} хувиар бууруулах уу ?`,
-    );
-    setButtonOnPress(() => proceedDecrease);
-    setIsConfirmationVisible(true);
-  };
-
-  const proceedDecrease = async () => {
-    setIsConfirmationVisible(false);
-    try {
-      setIsSubmitting(true);
-      const result = await loadBonusRequest(
-        (currentItem?.ID || 0).toString(),
-        'DEC_INT',
-      );
-      if (result) {
-        showToast('Таны зээлийн хүү амжилттай буурлаа');
-        await loadData();
-      }
-    } catch (error) {
-      handleErrorExpo(error, 'proceedDecrease');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
   return (
-    <View className="flex-1 items-center justify-center bg-bgPrimary">
-      <Text className="text-white opacity-50">Тун удахгүй</Text>
-      {/* <SafeAreaView>
-        <Header title={''} onBack={router.back} bgColor="#0B0B13" />
-      </SafeAreaView>
-      <ScrollView
-        className="flex-1 pt-5"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isSubmitting}
-            colors={['#34837B']}
-            onRefresh={loadData}
-          />
-        }>
-        <SafeAreaView style={{flex: 1}}>
-          <View className="flex-1">
-            <View className="mx-4 flex-row items-center justify-between rounded-xl px-6 pb-2">
-              <Text className="text-sm font-bold text-white">
-                Таны цуглуулсан оноо {currentCustomer?.BONUS || 0}
-              </Text>
-            </View>
-            {custProd.length > 0 && (
-              <View className="shadow-sm">
-                <Carousel
-                  loop={false}
-                  width={windowWidth}
-                  onSnapToItem={index => setCurrentItem(custProd[index])}
-                  height={400}
-                  autoPlay={false}
-                  data={custProd}
-                  mode="parallax"
-                  modeConfig={{
-                    parallaxScrollingScale: 0.93,
-                    parallaxScrollingOffset: 125,
-                  }}
-                  panGestureHandlerProps={{
-                    activeOffsetX: [-10, 10],
-                  }}
-                  renderItem={({item}) => (
-                    <BonusCard
-                      source={item}
-                      navigation={navigation}
-                      cardWidth={custProd.length > 1 ? undefined : 425}
-                    />
-                  )}
-                />
-              </View>
-            )}
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
+      {/* WebView container */}
+      <View className="flex-1">
+        <WebView
+          ref={webRef}
+          source={{ uri: HOME_MARKET_URL }}
+          onLoadStart={() => {
+            setLoading(true);
+            setWebError(null);
+          }}
+          onLoadEnd={() => setLoading(false)}
+          onError={(e) => {
+            setLoading(false);
+            setWebError(
+              e.nativeEvent?.description || "Ачааллахад алдаа гарлаа"
+            );
+          }}
+          onNavigationStateChange={(nav) => setCanGoBack(nav.canGoBack)}
+          javaScriptEnabled
+          domStorageEnabled
+          allowsBackForwardNavigationGestures
+          originWhitelist={["*"]}
+          setSupportMultipleWindows={false}
+          pullToRefreshEnabled={Platform.OS === "android"}
+          onShouldStartLoadWithRequest={(req) => {
+            // Keep pc-mall.mn inside; open other domains externally
+            if (isSameDomain(req.url)) return true;
+            if (req.navigationType !== "other") {
+              Linking.openURL(req.url).catch(() => {});
+              return false;
+            }
+            return true;
+          }}
+          style={{ backgroundColor: "#FFFFFF" }}
+        />
+
+        {/* Loading overlay */}
+        {loading && !webError && (
+          <View className="absolute inset-0 items-center justify-center bg-white/70">
+            <ActivityIndicator size="large" />
           </View>
-          <Confirmation
-            isVisible={isConfirmationVisible}
-            onClose={() => setIsConfirmationVisible(false)}
-            title={title}
-            description={description}
-            buttonOnPress={buttonOnPress}
-            isConfirmation={true}
-          />
-        </SafeAreaView>
-      </ScrollView> */}
+        )}
+
+        {/* Error overlay with retry */}
+        {webError && (
+          <View className="absolute inset-0 items-center justify-center bg-white">
+            <Text className="mb-3 text-base text-[#6B7280]">{webError}</Text>
+            <TouchableOpacity
+              onPress={handleReload}
+              className="flex-row items-center rounded-xl bg-[#001165] px-4 py-2"
+            >
+              <SvgIcon name="refresh" width={18} height={18} color="#fff" />
+              <Text className="ml-2 text-white font-semibold">
+                Дахин ачаалах
+              </Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Floating refresh button (optional) */}
+        {!webError && (
+          <TouchableOpacity
+            onPress={handleReload}
+            className="absolute bottom-5 right-5 rounded-full bg-[#001165] p-3 shadow-lg"
+            activeOpacity={0.8}
+          >
+            <SvgIcon name="refresh" width={20} height={20} color="#fff" />
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 };

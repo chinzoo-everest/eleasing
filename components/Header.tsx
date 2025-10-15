@@ -25,12 +25,12 @@ const Header = ({
       >
         {/* Back button (kept left) */}
         <TouchableOpacity onPress={onBack} className="absolute left-6">
-          <SvgIcon name="back" />
+          <SvgIcon name="header_back" />
         </TouchableOpacity>
 
         {/* Centered title */}
         <Text
-          className="font-Inter text-xl text-center"
+          className="font-Inter text-xl text-center font-bold"
           style={{ color: textColor }}
         >
           {title}

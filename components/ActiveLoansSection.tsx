@@ -1,9 +1,9 @@
-import React from 'react';
-import {View, Text} from 'react-native';
-import {MotiView} from 'moti';
-import {CLoanInfo} from '@type/interfaces/Loan';
-import LoanListItem from './LoanListItem';
-import EmptyLoanState from './EmptyLoanState';
+import React from "react";
+import { View, Text } from "react-native";
+import { MotiView } from "moti";
+import { CLoanInfo } from "@type/interfaces/Loan";
+import LoanListItem from "./LoanListItem";
+import EmptyLoanState from "./EmptyLoanState";
 
 interface ActiveLoansSectionProps {
   loanList: CLoanInfo[];
@@ -19,18 +19,20 @@ const ActiveLoansSection = ({
   if (loanList.length > 0) {
     return (
       <MotiView
-        className="relative z-10 mt-5 rounded-lg py-6"
-        from={{opacity: 0, translateY: 20}}
-        animate={{opacity: 1, translateY: 0}}
+        className="relative z-10 mt-6 rounded-lg "
+        from={{ opacity: 0, translateY: 20 }}
+        animate={{ opacity: 1, translateY: 0 }}
         transition={{
-          type: 'timing',
+          type: "timing",
           duration: 600,
           delay: 300,
-        }}>
-        <Text className="text-lg font-bold text-white">Идэвхитэй зээл</Text>
-        <View className="width-full -mx-10 mb-4 mt-2 h-px bg-gray-500" />
+        }}
+      >
+        <Text className="text-lg mx-4 font-bold text-[#131A43] mb-2">
+          Идэвхитэй зээл
+        </Text>
 
-        {loanList.map(item => (
+        {loanList.map((item) => (
           <LoanListItem
             key={item.LOAN_ID}
             item={item}

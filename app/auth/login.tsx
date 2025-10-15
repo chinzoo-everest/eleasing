@@ -361,7 +361,7 @@ const Login = () => {
           <Text className="mb-1 text-center text-4xl font-bold text-white">
             e·leasing
           </Text>
-          <View className="mt-14 rounded-2xl bg-[#]">
+          <View className="mt-14 rounded-2xl bg-[#001165] p-2">
             {/* Username */}
             <Controller
               control={control}
@@ -437,11 +437,13 @@ const Login = () => {
                     onPress={handleForgotPassword}
                     text="Нууц үгээ мартсан уу?"
                   />
-                  <TransparentButton
-                    disabled={isSubmitting}
-                    onPress={handleRenewAccount}
-                    text="Бүртгэл сэргээх"
-                  />
+                  <View className="mt-4">
+                    <TransparentButton
+                      disabled={isSubmitting}
+                      onPress={handleRenewAccount}
+                      text="Бүртгэл сэргээх"
+                    />
+                  </View>
 
                   {isShowBioButton && (
                     <IconButton

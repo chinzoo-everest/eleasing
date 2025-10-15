@@ -116,6 +116,13 @@ const LoanDetail = () => {
       TOTAL_PERIOD_BALANCE,
     };
   }, [loanData]);
+  const remainingPre = Math.max(0, derived?.REMAINING_PRE ?? 0);
+  const payTotal =
+    (currentCalc?.loanAmt ?? 0) +
+    (currentCalc?.intAmt ?? 0) +
+    (currentCalc?.lossAmt ?? 0);
+
+  const remainingFee = Math.max(0, derived?.REMAINING_FEE ?? 0);
 
   // ===== Navigation handlers =====
   const handlePayment = async (type: "normal" | "prePay" | "close") => {
@@ -179,7 +186,6 @@ const LoanDetail = () => {
     }
   };
 
-  // ===== UI =====
   return (
     <View className="flex-1 bg-[#fff]" style={{ paddingTop: insets.top }}>
       <Header
@@ -191,7 +197,7 @@ const LoanDetail = () => {
       />
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="m-6 rounded-2xl overflow-hidden bg-white shadow-lg">
+        <View className="mx-4 my-5 rounded-2xl overflow-hidden bg-white shadow-lg">
           <View className="bg-[#0A1A64] px-6 py-5">
             <Text className="text-white text-xl font-bold">
               {loanData?.PROD_NAME || "Зээл"}
@@ -230,44 +236,67 @@ const LoanDetail = () => {
           </View>
 
           <View className="px-6 py-6 bg-[#F8FBFF] rounded-b-3xl">
-            <Text className="text-[#1B3C69] opacity-60 text-sm">
-              Үлдэгдэл зээл
-            </Text>
-            <Text className="text-[#1B3C69] text-3xl font-bold mt-1">
-              ₮{(loanData?.BALANCE || 0).toLocaleString("mn-MN")}
-            </Text>
-
-            <View className="flex-row justify-between mt-6">
-              <View>
-                <Text className="text-[#1B3C69] opacity-60 text-sm">
-                  Олгосон зээл
-                </Text>
-                <Text className="text-lg font-bold text-[#1B3C69]">
-                  ₮{(loanData?.AMT || 0).toLocaleString("mn-MN")}
-                </Text>
-                <View className="mt-5">
+            <View className="flex-row justify-between">
+              {/* Left Column */}
+              <View className="flex-col justify-between">
+                <View className="mb-5">
                   <Text className="text-[#1B3C69] opacity-60 text-sm">
-                    Төлөлт хийх огноо
+                    Үлдэгдэл зээл
                   </Text>
-                  <Text className="text-lg font-bold text-[#1B3C69]">
-                    {formatDate(loanData?.NEXT_PAY_DATE || "", "yyyy-MM-dd")}
+                  <Text className="text-[#1B3C69] text-2xl font-bold mt-1">
+                    ₮{(loanData?.BALANCE || 0).toLocaleString("mn-MN")}
+                  </Text>
+                </View>
+
+                <View className="mb-5">
+                  <Text className="text-[#1B3C69] opacity-60 text-sm">
+                    Зээлийн хүү
+                  </Text>
+                  <Text className="text-lg font-bold text-[#1B3C69] mt-1">
+                    {loanData?.INTEREST}%
+                  </Text>
+                </View>
+
+                <View>
+                  <Text className="text-[#1B3C69] opacity-60 text-sm">
+                    Дуусах хугацаа
+                  </Text>
+                  <Text className="text-lg font-bold text-[#1B3C69] mt-1">
+                    {formatDate(loanData?.PLAN_FINISH || "", "yyyy-MM-dd")}
                   </Text>
                 </View>
               </View>
 
-              <View>
-                <Text className="text-[#1B3C69] opacity-60 text-sm">
-                  Зээлийн хүү
-                </Text>
-                <Text className="text-lg font-bold text-[#1B3C69]">
-                  {loanData?.INTEREST}%
-                </Text>
-                <View className="mt-5">
+              {/* Right Column */}
+              <View className="flex-col justify-between ">
+                <View className="mb-5">
                   <Text className="text-[#1B3C69] opacity-60 text-sm">
-                    Төлөх шимтгэл
+                    Олгосон зээл
                   </Text>
-                  <Text className="text-lg font-bold text-[#1B3C69]">
-                    ₮{derived?.REMAINING_FEE?.toLocaleString("mn-MN")}
+                  <Text className="text-2xl font-bold text-[#1B3C69] mt-1">
+                    ₮{(loanData?.AMT || 0).toLocaleString("mn-MN")}
+                  </Text>
+                </View>
+
+                <View className="mb-5">
+                  <Text className="text-[#1B3C69] opacity-60 text-sm">
+                    {remainingPre === 0 ? "Төлөх дүн" : "Урьдчилгаа"}
+                  </Text>
+                  <Text className="text-lg font-bold text-[#1B3C69] mt-1">
+                    {remainingPre === 0
+                      ? `${payTotal.toLocaleString("mn-MN")} ₮`
+                      : `₮${remainingPre.toLocaleString("mn-MN")}`}
+                  </Text>
+                </View>
+
+                <View>
+                  <Text className="text-[#1B3C69] opacity-60 text-sm">
+                    {remainingFee === 0 ? "Төлөлт хийх огноо" : "Төлөх шимтгэл"}
+                  </Text>
+                  <Text className="text-lg font-bold text-[#1B3C69] mt-1">
+                    {remainingFee === 0
+                      ? formatDate(loanData?.NEXT_PAY_DATE || "", "yyyy-MM-dd")
+                      : `₮${remainingFee.toLocaleString("mn-MN")}`}
                   </Text>
                 </View>
               </View>
@@ -277,7 +306,7 @@ const LoanDetail = () => {
           <View className="flex-row justify-between mt-5 pb-11">
             <TouchableOpacity
               onPress={handleLoanGraphic}
-              className="items-center bg-white py-7 px-5 rounded-xl shadow-sm"
+              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
             >
               <SvgIcon name="chard" height={26} width={26} color="#0A1A64" />
               <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
@@ -287,7 +316,7 @@ const LoanDetail = () => {
 
             <TouchableOpacity
               onPress={handleDeposit}
-              className="items-center bg-white py-7 px-5 rounded-xl shadow-sm"
+              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
             >
               <SvgIcon name="deposit" color="#0A1A64" height={26} width={26} />
               <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
@@ -297,7 +326,7 @@ const LoanDetail = () => {
 
             <TouchableOpacity
               onPress={handleTransfer}
-              className="items-center bg-white py-7 px-5 rounded-xl shadow-sm"
+              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
             >
               <SvgIcon name="receipt" color="#0A1A64" height={26} width={26} />
               <Text className="text-xs mt-5 text-[#0A1A64] font-medium">

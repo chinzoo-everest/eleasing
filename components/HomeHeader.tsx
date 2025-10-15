@@ -1,8 +1,11 @@
-import React, {useState} from 'react';
-import {View, TouchableOpacity, Text} from 'react-native';
-import SvgIcon from './SvgIcon';
-import {routePush} from '@utils/routePush';
-import {SCREENS} from '@customConfig/route';
+// HomeHeader.tsx
+import React, { useState } from "react";
+import { View, TouchableOpacity, Text } from "react-native";
+import SvgIcon from "./SvgIcon";
+import { routePush } from "@utils/routePush";
+import { SCREENS } from "@customConfig/route";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Sidebar from "./Sidebar";
 
 type HomeHeaderProps = {
   title: string;
@@ -15,18 +18,28 @@ const HomeHeader = ({
   notificationCount = 0,
   isShowNotification = true,
 }: HomeHeaderProps) => {
-  const [, setSidebarVisible] = useState(false);
+  const insets = useSafeAreaInsets();
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   return (
-    <View className="bg-HDefault px-7">
-      <View className="mb-6 flex-row items-center justify-between">
-        <TouchableOpacity onPress={() => setSidebarVisible(true)}>
-          <SvgIcon name="menu_home" width={30} height={30} />
-        </TouchableOpacity>
+    <View className=" px-7 bg-white" style={{ paddingTop: insets.top }}>
+      <Sidebar
+        visible={isSidebarVisible}
+        onClose={() => setSidebarVisible(false)}
+      />
 
-        {isShowNotification && (
+      <View className="mb-2 flex-row items-center justify-between bg-red-400">
+        <TouchableOpacity
+          onPress={() => setSidebarVisible(true)}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
+          <SvgIcon name="noti_bell" width={24} height={24} />
+        </TouchableOpacity>
+        <Text>{title}</Text>
+        {isShowNotification ? (
           <TouchableOpacity
-            onPress={async () => await routePush(SCREENS.NOTIFICATION)}>
+            onPress={async () => await routePush(SCREENS.NOTIFICATION)}
+          >
             <SvgIcon name="noti_bell" width={23} height={23} />
             {notificationCount > 0 && (
               <View className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full bg-[#FF6D31]">
@@ -34,10 +47,12 @@ const HomeHeader = ({
               </View>
             )}
           </TouchableOpacity>
+        ) : (
+          <View style={{ width: 23, height: 23 }} />
         )}
       </View>
 
-      <Text className="mb-4 mr-20 text-left text-2xl font-medium">{title}</Text>
+      {/* title */}
     </View>
   );
 };

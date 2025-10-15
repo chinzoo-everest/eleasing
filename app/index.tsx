@@ -1,9 +1,8 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  Animated,
   SafeAreaView,
   Image,
   StatusBar,
@@ -12,6 +11,8 @@ import SvgIcon from "@components/SvgIcon";
 import { routePush } from "@utils/routePush";
 import { SCREENS } from "../config/route";
 import { BaseURLService } from "@services/baseURL.service";
+
+type TypeChoice = "loan" | "leasing" | null;
 
 const onboardingData = [
   {
@@ -35,48 +36,30 @@ const onboardingData = [
 
 const Onboarding = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedType, setSelectedType] = useState<"loan" | "leasing" | null>(
-    null
-  );
-  const imageFade = useRef(new Animated.Value(1)).current;
+  const [selectedType, setSelectedType] = useState<TypeChoice>(null);
+
+  const goToIndex = (next: number) => {
+    setCurrentIndex(next);
+  };
 
   const handleNext = () => {
-    if (currentIndex < onboardingData.length) {
-      Animated.timing(imageFade, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentIndex((prev) => prev + 1);
-        imageFade.setValue(1);
-      });
-    } else {
-      handleStart();
+    const lastSlideIndex = onboardingData.length - 1;
+    if (currentIndex <= lastSlideIndex) {
+      const next = Math.min(currentIndex + 1, onboardingData.length);
+      goToIndex(next);
     }
   };
 
   const handleBack = () => {
     if (currentIndex > 0) {
-      Animated.timing(imageFade, {
-        toValue: 0,
-        duration: 250,
-        useNativeDriver: true,
-      }).start(() => {
-        setCurrentIndex((prev) => prev - 1);
-        imageFade.setValue(1);
-      });
+      goToIndex(currentIndex - 1);
     }
   };
 
-  const handleStart = async () => {
-    await routePush(SCREENS.LOGIN);
-  };
+  const handleConfirmSelection = async () => {
+    if (!selectedType) return;
 
-  const handleSelectType = async (type: "loan" | "leasing") => {
-    setSelectedType(type);
-
-    // Uses BaseURLService directly — no shared code modification
-    if (type === "loan") {
+    if (selectedType === "loan") {
       BaseURLService.setBaseURL("https://pcmall2-api.everestapp.mn/");
       console.log("BaseURLService now:", BaseURLService.getCurrentBaseURL());
     } else {
@@ -84,23 +67,29 @@ const Onboarding = () => {
       console.log("BaseURLService now:", BaseURLService.getCurrentBaseURL());
     }
 
-    // Skip backend handling for now
     await routePush(SCREENS.LOGIN);
   };
+
+  const onSelectType = (type: Exclude<TypeChoice, null>) => {
+    setSelectedType(type);
+  };
+
+  const onSlides = currentIndex < onboardingData.length;
 
   return (
     <View className="flex-1 bg-[#2A45C4]">
       <StatusBar barStyle="light-content" backgroundColor="#2A45C4" />
-      <SafeAreaView className="absolute left-0 right-0 top-0 z-10">
-        {currentIndex > 0 && currentIndex < onboardingData.length && (
-          <TouchableOpacity className="mx-4 mt-4" onPress={handleBack}>
+      <SafeAreaView className="z-10">
+        {currentIndex > 0 && (
+          <TouchableOpacity className="mx-4" onPress={handleBack}>
             <SvgIcon name="back" />
           </TouchableOpacity>
         )}
       </SafeAreaView>
 
-      <Animated.View className="flex-1" style={{ opacity: imageFade }}>
-        {currentIndex < onboardingData.length ? (
+      {/* No Animated.View, just a plain View */}
+      <View className="flex-1">
+        {onSlides ? (
           <View className="flex-1 justify-between px-8 pb-10 pt-24">
             <View>
               <Text className="text-2xl font-extrabold text-white">
@@ -115,15 +104,11 @@ const Onboarding = () => {
               <Image
                 source={onboardingData[currentIndex].image}
                 resizeMode="contain"
-                style={{
-                  width: "95%",
-                  height: "55%",
-                }}
+                style={{ width: "95%", height: "55%" }}
               />
             </View>
 
             <View className="mt-8">
-              {/* Indicator — only for first 3 pages */}
               <View className="mb-8 flex-row justify-center space-x-2">
                 {onboardingData.map((_, i) => (
                   <View
@@ -146,13 +131,14 @@ const Onboarding = () => {
             </View>
           </View>
         ) : (
+          // Selection page
           <View className="flex-1 justify-center bg-[#2A45C4]">
             <View className="mx-10 mt-6">
               <Text className="text-2xl font-bold text-white">
                 НЭВТРЭХ СИСТЕМ
               </Text>
               <Text className="mr-10 mt-4 text-lg text-white opacity-90 leading-6">
-                Та өөрийн бүртгэлтэй системээ сонгож үргэлжлүүлэх товчыг дарна
+                Та өөрийн бүртгэлтэй системээ сонгож “Үргэлжлүүлэх” товчыг дарна
                 уу.
               </Text>
             </View>
@@ -160,20 +146,18 @@ const Onboarding = () => {
             <View className="mx-8 mt-10 space-y-5">
               <TouchableOpacity
                 activeOpacity={0.8}
-                className={`rounded-2xl p-5 ${
+                className={`rounded-2xl p-5 mb-5 ${
                   selectedType === "loan" ? "bg-blue-700" : "bg-blue-500"
                 }`}
-                onPress={() => handleSelectType("loan")}
+                onPress={() => onSelectType("loan")}
               >
                 <View className="flex-row items-center space-x-4">
-                  <View
-                    className={`h-6 w-6 rounded-full border-2 ${
-                      selectedType === "loan"
-                        ? "border-white bg-white"
-                        : "border-white"
-                    }`}
-                  />
-                  <View>
+                  <View className="h-6 w-6 rounded-full border-2 border-white items-center justify-center">
+                    {selectedType === "loan" && (
+                      <View className="h-3.5 w-3.5 rounded-full bg-white" />
+                    )}
+                  </View>
+                  <View className="ml-4 ">
                     <Text className="text-lg font-bold text-white">
                       ХЭРЭГЛЭЭНИЙ ЗЭЭЛ
                     </Text>
@@ -189,17 +173,15 @@ const Onboarding = () => {
                 className={`rounded-2xl p-5 ${
                   selectedType === "leasing" ? "bg-blue-700" : "bg-blue-500"
                 }`}
-                onPress={() => handleSelectType("leasing")}
+                onPress={() => onSelectType("leasing")}
               >
                 <View className="flex-row items-center space-x-4">
-                  <View
-                    className={`h-6 w-6 rounded-full border-2 ${
-                      selectedType === "leasing"
-                        ? "border-white bg-white"
-                        : "border-white"
-                    }`}
-                  />
-                  <View>
+                  <View className="h-6 w-6 rounded-full border-2 border-white items-center justify-center">
+                    {selectedType === "leasing" && (
+                      <View className="h-3.5 w-3.5 rounded-full bg-white" />
+                    )}
+                  </View>
+                  <View className="ml-4">
                     <Text className="text-lg font-bold text-white">
                       ХЭРЭГЛЭЭНИЙ ЛИЗИНГ
                     </Text>
@@ -208,9 +190,22 @@ const Onboarding = () => {
                 </View>
               </TouchableOpacity>
             </View>
+
+            <TouchableOpacity
+              activeOpacity={selectedType ? 0.8 : 1}
+              disabled={!selectedType}
+              onPress={handleConfirmSelection}
+              className={`mx-8 mt-8 rounded-full px-10 py-4 ${
+                selectedType ? "bg-[#65E33F]" : "bg-[#65E33F] opacity-40"
+              }`}
+            >
+              <Text className="text-center text-lg font-bold text-white">
+                Үргэлжлүүлэх
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
-      </Animated.View>
+      </View>
     </View>
   );
 };

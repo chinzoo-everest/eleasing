@@ -1,11 +1,11 @@
-import React, {useMemo} from 'react';
-import {ScrollView, View, ViewStyle, LogBox} from 'react-native';
-import RenderHtml from 'react-native-render-html';
-import {useWindowDimensions} from 'react-native';
+import React, { useMemo } from "react";
+import { ScrollView, View, ViewStyle, LogBox } from "react-native";
+import RenderHtml from "react-native-render-html";
+import { useWindowDimensions } from "react-native";
 
 // Ignore specific warnings from react-native-render-html
 LogBox.ignoreLogs([
-  'Warning: bound renderChildren: Support for defaultProps will be removed from function components',
+  "Warning: bound renderChildren: Support for defaultProps will be removed from function components",
 ]);
 
 interface HtmlRendererProps {
@@ -17,32 +17,32 @@ interface HtmlRendererProps {
 }
 
 const defaultCustomStyles = {
-  p: {color: '#FFFFFF'},
-  h1: {color: '#FFFFFF'},
-  h2: {color: '#FFFFFF'},
-  h3: {color: '#FFFFFF'},
-  h4: {color: '#FFFFFF'},
-  h5: {color: '#FFFFFF'},
-  h6: {color: '#FFFFFF'},
-  label: {color: '#FFFFFF'},
-  span: {color: '#FFFFFF'},
-  body: {backgroundColor: '#0B0B13', padding: 15, margin: -15},
-  a: {color: '#FFFFFF'},
-  li: {color: '#FFFFFF'},
-  ul: {color: '#FFFFFF'},
-  ol: {color: '#FFFFFF'},
-  button: {color: '#FFFFFF'},
+  p: { color: "#1B3C69" },
+  h1: { color: "#1B3C69" },
+  h2: { color: "#1B3C69" },
+  h3: { color: "#1B3C69" },
+  h4: { color: "#1B3C69" },
+  h5: { color: "#1B3C69" },
+  h6: { color: "#1B3C69" },
+  label: { color: "#1B3C69" },
+  span: { color: "#1B3C69" },
+  body: { backgroundColor: "#fff", padding: 15, margin: -15 },
+  a: { color: "#1B3C69" },
+  li: { color: "#1B3C69" },
+  ul: { color: "#1B3C69" },
+  ol: { color: "#1B3C69" },
+  button: { color: "#1B3C69" },
 };
 
 const HtmlRenderer: React.FC<HtmlRendererProps> = React.memo(
   ({
     htmlContent,
-    containerClassName = 'p-4',
+    containerClassName = "p-4",
     containerStyle,
     scrollable = true,
     customStyles = {},
   }) => {
-    const {width} = useWindowDimensions();
+    const { width } = useWindowDimensions();
 
     // Memoize the merged styles to prevent unnecessary re-renders
     const mergedStyles = useMemo(
@@ -50,7 +50,7 @@ const HtmlRenderer: React.FC<HtmlRendererProps> = React.memo(
         ...defaultCustomStyles,
         ...customStyles,
       }),
-      [customStyles],
+      [customStyles]
     );
 
     // Memoize the source to prevent unnecessary re-renders
@@ -58,7 +58,7 @@ const HtmlRenderer: React.FC<HtmlRendererProps> = React.memo(
       () => ({
         html: htmlContent,
       }),
-      [htmlContent],
+      [htmlContent]
     );
 
     const content = useMemo(
@@ -73,7 +73,7 @@ const HtmlRenderer: React.FC<HtmlRendererProps> = React.memo(
           />
         </View>
       ),
-      [containerClassName, containerStyle, width, source, mergedStyles],
+      [containerClassName, containerStyle, width, source, mergedStyles]
     );
 
     if (scrollable) {
@@ -81,8 +81,8 @@ const HtmlRenderer: React.FC<HtmlRendererProps> = React.memo(
     }
 
     return content;
-  },
+  }
 );
 
-HtmlRenderer.displayName = 'HtmlRenderer';
+HtmlRenderer.displayName = "HtmlRenderer";
 export default HtmlRenderer;

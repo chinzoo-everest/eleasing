@@ -176,9 +176,15 @@ const icons: Record<string, React.FC<SvgProps>> = {
   show: require("@assets/images/settings_hidepass.svg").default,
   chard: require("@assets/images/chard.svg").default,
   normal: require("@assets/images/pass.svg").default,
-
+  branch_phone: require("@assets/images/branch_phone.svg").default,
   exceeded: require("@assets/images/reject.svg").default,
   receipt: require("@assets/images/receipt.svg").default,
+  market: require("@assets/images/market.svg").default,
+  noti_bell: require("@assets/images/bell.svg").default,
+  faq_corner: require("@assets/images/faq_corner.svg").default,
+  header_back: require("@assets/images/headerback.svg").default,
+  phone_outline: require("@assets/images/edit_link.svg").default,
+  edit_link: require("@assets/images/phone_outline.svg").default,
 };
 
 export default icons;
