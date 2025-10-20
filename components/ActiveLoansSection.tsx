@@ -43,14 +43,14 @@ const ActiveLoansSection = ({
     );
   }
 
-  if (!isSubmitting) {
-    return (
-      <EmptyLoanState
-        title=" "
-        description="Танд идэвхитэй зээл байхгүй байна"
-      />
-    );
-  }
+  // if (!isSubmitting) {
+  //   return (
+  //     <EmptyLoanState
+  //       title=" "
+  //       description="Танд идэвхитэй зээл байхгүй байна"
+  //     />
+  //   );
+  // }
 
   return null;
 };

@@ -76,7 +76,7 @@ export default function Map() {
         title="Салбарын байршил"
         onBack={() => router.back()}
         showBottomLine={false}
-        textColor="[#1B3C69]"
+        textColor="#1B3C69"
         bgColor="#fff"
       />
       <View className="mx-4 mt-4 flex-row rounded-full bg-white">

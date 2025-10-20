@@ -1,7 +1,7 @@
-import React from 'react';
-import {View, Text, StyleSheet, Platform} from 'react-native';
-import {BaseToastProps} from 'react-native-toast-message';
-import {LinearGradient} from 'expo-linear-gradient';
+import React from "react";
+import { View, Text, StyleSheet, Platform } from "react-native";
+import { BaseToastProps } from "react-native-toast-message";
+import { LinearGradient } from "expo-linear-gradient";
 
 // Define custom toast components
 const Toast = ({
@@ -22,7 +22,7 @@ const Toast = ({
       style={[
         styles.toastContainer,
         marginTop && styles.marginTop,
-        Platform.OS === 'ios'
+        Platform.OS === "ios"
           ? {
               ...styles.shadowIOS,
               shadowColor,
@@ -31,12 +31,14 @@ const Toast = ({
               ...styles.shadowAndroid,
               shadowColor,
             },
-      ]}>
+      ]}
+    >
       <LinearGradient
         colors={gradientColors}
-        start={{x: 0, y: 0}}
-        end={{x: 0.7, y: 1}}
-        style={styles.gradient}>
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0.7, y: 1 }}
+        style={styles.gradient}
+      >
         {text1 && <Text style={styles.titleText}>{text1}</Text>}
         {text2 && <Text style={styles.messageText}>{text2}</Text>}
       </LinearGradient>
@@ -46,13 +48,13 @@ const Toast = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
+    width: "100%",
     flex: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
   },
   toastContainer: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch",
   },
   marginTop: {
     marginTop: 10,
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 32,
     paddingVertical: 20,
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   shadowIOS: {
     shadowOffset: {
@@ -75,13 +77,13 @@ const styles = StyleSheet.create({
     elevation: 18,
   },
   titleText: {
-    fontWeight: 'bold',
+    fontWeight: "bold",
     fontSize: 14,
-    color: 'white',
+    color: "black",
   },
   messageText: {
     fontSize: 14,
-    color: 'white',
+    color: "black",
     opacity: 0.8,
     marginTop: 5,
   },
@@ -91,22 +93,18 @@ const toastConfig = {
   success: (props: BaseToastProps) => (
     <Toast
       {...props}
-      gradientColors={['#0E441A', '#0B0B13']}
-      shadowColor="#0E441A"
+      gradientColors={["#fff", "#fff"]}
+      shadowColor="#fff"
       marginTop
     />
   ),
   error: (props: BaseToastProps) => (
-    <Toast
-      {...props}
-      gradientColors={['#560515', '#0B0B13']}
-      shadowColor="#560515"
-    />
+    <Toast {...props} gradientColors={["#fff", "#fff"]} shadowColor="#fff" />
   ),
   info: (props: BaseToastProps) => (
     <Toast
       {...props}
-      gradientColors={['#0F4250', '#0B0B13']}
+      gradientColors={["#0F4250", "#0B0B13"]}
       shadowColor="#0F4250"
       marginTop
     />

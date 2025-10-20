@@ -103,21 +103,14 @@ const Faq: React.FC = () => {
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <Header
-        title="Зээлийн архив"
+        title="Асуулт хариулт"
         bgColor="white"
         showBottomLine={false}
         textColor="#1B3C69"
         onBack={() => router.back()}
       />
       {/* Subtitle */}
-      <View className="px-4 pt-2">
-        <Text className="text-xl font-semibold leading-6 text-[#1C2B49]">
-          We're here to help you with
-        </Text>
-        <Text className="text-xl font-semibold leading-6 text-[#1C2B49]">
-          anything and everything on E
-        </Text>
-      </View>
+      <View className="px-4 pt-2"></View>
       {/* Search */}
       <View className="px-4 pt-5">
         <View className="flex-row items-center rounded-full bg-[#F2F6FC] px-4 py-3 shadow-sm shadow-black/5">

@@ -71,6 +71,7 @@ const Calculator: React.FC = () => {
             placeholder="100,000"
             placeholderTextColor="#A2B0C6"
             className="text-right text-[34px] font-semibold text-[#496387]"
+            selectTextOnFocus={true}
           />
           <View className="mt-2 h-[1px] w-full bg-[#C0C5D9]" />
         </View>
@@ -90,6 +91,7 @@ const Calculator: React.FC = () => {
               placeholder="12"
               placeholderTextColor="#A2B0C6"
               className="text-right text-[34px] font-semibold text-[#496387]"
+              selectTextOnFocus={true}
             />
             <View className="mt-2 h-[1px] w-full bg-[#99A0C1]" />
           </View>
@@ -110,6 +112,7 @@ const Calculator: React.FC = () => {
               placeholder="1.00"
               placeholderTextColor="#A2B0C6"
               className="text-right text-[34px] font-semibold text-[#496387]"
+              selectTextOnFocus={true}
             />
             <View className="mt-2 h-[1px] w-full bg-[#99A0C1]" />
           </View>

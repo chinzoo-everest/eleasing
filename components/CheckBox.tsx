@@ -1,6 +1,6 @@
-import React, {ReactElement} from 'react';
-import {Text, TouchableOpacity, StyleSheet} from 'react-native';
-import Checkbox from 'expo-checkbox';
+import React, { ReactElement } from "react";
+import { Text, TouchableOpacity, StyleSheet } from "react-native";
+import Checkbox from "expo-checkbox";
 
 type Props = {
   text?: string | ReactElement;
@@ -13,8 +13,8 @@ type Props = {
 
 const CheckBox = ({
   text,
-  textColor = 'white',
-  fillColor = '#9C4FDD',
+  textColor = "white",
+  fillColor = "#1B3C69",
   isChecked,
   toggleCheckbox,
   disabled,
@@ -25,7 +25,8 @@ const CheckBox = ({
       onPress={() => toggleCheckbox(!isChecked)}
       style={styles.container}
       disabled={disabled}
-      {...props}>
+      {...props}
+    >
       <Checkbox
         value={isChecked}
         onValueChange={toggleCheckbox}
@@ -34,15 +35,15 @@ const CheckBox = ({
         style={styles.checkbox}
       />
 
-      <Text style={[styles.text, {color: textColor}]}>{text}</Text>
+      <Text style={[styles.text, { color: textColor }]}>{text}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   checkbox: {
     width: 16,

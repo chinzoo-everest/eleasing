@@ -19,11 +19,11 @@ export enum Config {
 
   BASE_URL = "https://e-leasing.everestapp.mn",
   BANK_STATEMENT_INSTRUCTION_URL = "https://cloud.everestapp.mn/documents/document/carzeel-statement-instruction/",
-  TERMS_SERVICE_URL = "https://cloud.everestapp.mn/documents/document/carzeel-terms/",
+  TERMS_SERVICE_URL = "https://cloud.everestapp.mn/documents/document/hleasing-terms/",
   ALERT_URL = "https://cloud.everestapp.mn/documents/document/carzeel-credit-new/",
   ALERT_URL2 = "https://cloud.everestapp.mn/documents/document/carzeel-credit-update/",
   DOCUMENT_URL = "https://cloud.everestapp.mn/documents/document/",
-  REGISTER_WEBVIEW_URL = "https://e-mandaldigital.everestapp.mn/mn/register/",
+  REGISTER_WEBVIEW_URL = "https://e-leasing.everestapp.mn/mn/register/",
   REPORT_PAGE_URL = "https://cloud.everestapp.mn/documents/report/",
   UPDATE_LOAN_LIMIT_WEBVIEW_URL = "https://e-mandaldigital.everestapp.mn/xyp/dan/si_update/?cust_id=",
   UPDATE_DAN_INFO_WEBVIEW_URL = "https://e-mandaldigital.everestapp.mn/xyp/dan/cust_update/?cust_id=",

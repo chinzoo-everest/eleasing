@@ -18,6 +18,7 @@ import { CCustomer } from "@type/interfaces/Customer";
 import { routePush } from "@utils/routePush";
 import { LogOutUser } from "@services/auth.service";
 import { SCREENS } from "@customConfig/route";
+import Confirmation from "@modals/Confirmation";
 
 const { width } = Dimensions.get("window");
 
@@ -29,6 +30,8 @@ const Sidebar = ({
   onClose: () => void;
 }) => {
   const insets = useSafeAreaInsets();
+  const [showConfirm, setShowConfirm] = useState(false); // ← нэмэв
+
   const [slideAnim] = useState(new Animated.Value(-width));
   const [fadeAnim] = useState(new Animated.Value(0));
   const context = useContext(GlobalContext);
@@ -169,7 +172,7 @@ const Sidebar = ({
                   Та системээс гарахдаа итгэлтэй байна уу?
                 </Text>
                 <TouchableOpacity
-                  onPress={() => LogOutUser()}
+                  onPress={() => setShowConfirm(true)}
                   className="flex-row items-start justify-start border border-[#E9E9ED] rounded-full "
                 >
                   <View className="bg-[#2A45C4] p-5 rounded-3xl">
@@ -184,6 +187,18 @@ const Sidebar = ({
           </View>
         </Animated.View>
       </Animated.View>
+      <Confirmation
+        isVisible={showConfirm}
+        isConfirmation
+        title="Системээс гарах уу?"
+        description="Гарахад таны идэвхтэй сешн хаагдана."
+        onClose={() => setShowConfirm(false)}
+        buttonOnPress={() => {
+          setShowConfirm(false);
+          onClose();
+          LogOutUser();
+        }}
+      />
     </Modal>
   );
 };

@@ -92,7 +92,9 @@ const ResetPass = () => {
       <Header
         title="Нууц үг сэргээх"
         onBack={() => router.back()}
-        bgColor="#0B0B13"
+        bgColor="#fff"
+        textColor="#1B3C69"
+        showBottomLine={false}
       />
       <CustomScrollView>
         <View className="mt-5 flex-1 px-4">

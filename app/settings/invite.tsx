@@ -118,7 +118,7 @@ const Invite = () => {
                   placeholder="Утасны дугаар"
                   keyboard="number-pad"
                   onChangeText={field.onChange}
-                  maxLength={8}
+                  maxLength={9}
                 />
               )}
             />

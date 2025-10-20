@@ -1,23 +1,23 @@
-import {useGlobalSearchParams, useRouter} from 'expo-router';
-import React, {useCallback, useEffect, useState, useRef} from 'react';
-import {View, ActivityIndicator} from 'react-native';
-import {useGlobalContext} from '@hooks/useGlobalContext';
-import Header from '@components/Header';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {handleErrorExpo} from '@utils/handleErrorOnExpo';
-import {Config} from '@customConfig/config';
-import WebView from 'react-native-webview';
-import {showToast} from '@utils/showToast';
-import {routePush} from '@utils/routePush';
-import {SCREENS} from '@customConfig/route';
+import { useGlobalSearchParams, useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState, useRef } from "react";
+import { View, ActivityIndicator } from "react-native";
+import { useGlobalContext } from "@hooks/useGlobalContext";
+import Header from "@components/Header";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { handleErrorExpo } from "@utils/handleErrorOnExpo";
+import { Config } from "@customConfig/config";
+import WebView from "react-native-webview";
+import { showToast } from "@utils/showToast";
+import { routePush } from "@utils/routePush";
+import { SCREENS } from "@customConfig/route";
 
 const UpdateLoanLimit = () => {
-  const {mode} = useGlobalSearchParams();
+  const { mode } = useGlobalSearchParams();
   const router = useRouter();
-  const {state} = useGlobalContext();
+  const { state } = useGlobalContext();
   const insets = useSafeAreaInsets();
   const currentCustomer = state?.currentUser;
-  const [webUri, setWebUri] = useState<string>('');
+  const [webUri, setWebUri] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const webViewRef = useRef<WebView>(null);
   const successDetected = useRef(false);
@@ -43,14 +43,14 @@ const UpdateLoanLimit = () => {
 
     try {
       const baseUrl =
-        mode === 'updateLoanLimit'
+        mode === "updateLoanLimit"
           ? Config.UPDATE_LOAN_LIMIT_WEBVIEW_URL +
-              `${currentCustomer?.CUST_ID}` || ''
+              `${currentCustomer?.CUST_ID}` || ""
           : Config.UPDATE_DAN_INFO_WEBVIEW_URL +
-              `${currentCustomer?.CUST_ID}` || '';
+              `${currentCustomer?.CUST_ID}` || "";
       setWebUri(baseUrl);
     } catch (error) {
-      handleErrorExpo(error, 'UpdateLoanLimit - fetchHtmlContent');
+      handleErrorExpo(error, "UpdateLoanLimit - fetchHtmlContent");
     } finally {
       setIsLoading(false);
     }
@@ -63,7 +63,7 @@ const UpdateLoanLimit = () => {
   const handleNavigationStateChange = (navState: any) => {
     // Check if the URL includes the target URL pattern
     if (
-      navState.url.includes('e-mandaldigital.everestapp.mn/xyp/dan/authorized')
+      navState.url.includes("e-mandaldigital.everestapp.mn/xyp/dan/authorized")
     ) {
       // If we're on the authorized URL, check for success message in the content
       if (webViewRef.current) {
@@ -81,13 +81,13 @@ const UpdateLoanLimit = () => {
   };
 
   const handleMessage = async (event: any) => {
-    const {data} = event.nativeEvent;
+    const { data } = event.nativeEvent;
 
-    if (data === 'SUCCESS_MESSAGE_FOUND' && !successDetected.current) {
+    if (data === "SUCCESS_MESSAGE_FOUND" && !successDetected.current) {
       successDetected.current = true; // Prevent multiple executions
 
       // Show success toast and navigate back
-      showToast('Амжилттай', 'Таны мэдээллийг амжилттай шинэчлэлээ', 'success');
+      showToast("Амжилттай", "Таны мэдээллийг амжилттай шинэчлэлээ", "success");
 
       // Add slight delay before navigation to ensure toast is visible
       // eslint-disable-next-line no-undef
@@ -98,12 +98,14 @@ const UpdateLoanLimit = () => {
   };
 
   return (
-    <View className="flex-1 bg-white" style={{paddingTop: insets.top}}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <Header
         title={
-          mode === 'updateLoanLimit' ? 'Эрх шинэчлэх' : 'Бүртгэл баталгаажуулах'
+          mode === "updateLoanLimit" ? "Эрх шинэчлэх" : "Бүртгэл баталгаажуулах"
         }
-        bgColor="#0B0B13"
+        bgColor="#fff"
+        textColor="#1B3C69"
+        showBottomLine={false}
         onBack={() => router.back()}
       />
 
@@ -111,7 +113,7 @@ const UpdateLoanLimit = () => {
         {webUri && (
           <WebView
             ref={webViewRef}
-            source={{uri: webUri}}
+            source={{ uri: webUri }}
             onLoadStart={() => setIsLoading(true)}
             onLoadEnd={() => setIsLoading(false)}
             onNavigationStateChange={handleNavigationStateChange}
@@ -120,15 +122,15 @@ const UpdateLoanLimit = () => {
             className="bg-bgPrimary"
             style={{
               flex: 1,
-              width: '100%',
-              height: '100%',
-              backgroundColor: '#fff',
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#fff",
             }}
           />
         )}
         {isLoading && (
-          <View className="absolute h-full w-full items-center justify-center bg-bgPrimary">
-            <ActivityIndicator size="small" color="#9C4FDD" />
+          <View className="absolute h-full w-full items-center justify-center bg-[#1B3C69]">
+            <ActivityIndicator size="small" color="#fff" />
           </View>
         )}
       </View>

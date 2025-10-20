@@ -90,7 +90,8 @@ const RenewAccount = () => {
         title="Бүртгэл сэргээх"
         onBack={() => router.back()}
         bgColor="#FFFFFF"
-        textColor="#0B0B13"
+        textColor="#1B3C69"
+        showBottomLine={false}
       />
 
       <CustomScrollView>

@@ -44,6 +44,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -64,6 +65,7 @@ const Home = ({ navigation }: any) => {
   const context = useContext(GlobalContext);
   const insets = useSafeAreaInsets();
   const scrollViewRef = useRef<ScrollView>(null);
+  const contractCardRef = useRef<View>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [custProd, setCustProd] = useState<CCustProd[]>([]);
@@ -77,8 +79,7 @@ const Home = ({ navigation }: any) => {
   const [confirmationTitle, setConfirmationTitle] = useState("");
   const [confirmationCallback, setConfirmationCallback] =
     useState<() => void>();
-  // keep prop presence for LoanCard if it expects it; never set any contract/verify data
-  const [screenData] = useState<CScreen>();
+  const [screenData, setScreenData] = useState<CScreen>();
   const [custBanks, setCustBanks] = useState<CCustBank[]>([]);
   const [loanRequestList, setLoanRequestList] = useState<LoanRequest[]>([]);
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(
@@ -93,16 +94,21 @@ const Home = ({ navigation }: any) => {
         setLoanList([]);
         setBannerList([]);
 
-        // still load config to populate context, but do not use it for contract/verify gates
-        await loadConfigData(dispatch);
+        const configData = await loadConfigData(dispatch);
         const result = await loadCustomerData(dispatch);
-
+        let customerInfo: CCustomer;
         if (result?.customer) {
-          setCustBanks(result.customer.BANK_LIST || []);
+          console.info("STATUS_ID", result?.customer.STATUS_ID);
+          console.info("ONLINE_CONT", result?.customer.ONLINE_CONT);
+          setCustBanks(result?.customer?.BANK_LIST || []);
           setCurrentCustomer(result.customer);
+          customerInfo = result.customer;
+
+          console.info("SCREEN_DATA", result.screen);
+          setScreenData(result.screen);
         }
 
-        if (result?.cust_prod) {
+        if (result.cust_prod) {
           setCustProd(result.cust_prod);
         }
 
@@ -118,8 +124,14 @@ const Home = ({ navigation }: any) => {
       } catch (error) {
         handleErrorExpo(error, "loadData");
       } finally {
-        if (manuallyResetSubmitting) setIsSubmitting(false);
-        setTimeout(() => setIsLoading(false), 1000);
+        if (manuallyResetSubmitting) {
+          setIsSubmitting(false);
+        }
+
+        // eslint-disable-next-line no-undef
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
       }
     },
     [dispatch]
@@ -141,7 +153,7 @@ const Home = ({ navigation }: any) => {
     setIsSubmitting(true);
     try {
       if (currentCustomer?.REG_NO) {
-        const result = await processRenewLoanAmt(currentCustomer.REG_NO);
+        const result = await processRenewLoanAmt(currentCustomer?.REG_NO);
         if (!result) return;
         await loadData();
       }
@@ -152,12 +164,36 @@ const Home = ({ navigation }: any) => {
     }
   };
 
+  const scrollToContractCard = useCallback(() => {
+    if (contractCardRef.current && scrollViewRef.current) {
+      contractCardRef.current.measureLayout(
+        // @ts-ignore
+        scrollViewRef.current,
+        (_, y) => {
+          scrollViewRef.current?.scrollTo({ y, animated: true });
+        },
+        () => console.error("Failed to measure contract card layout")
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (screenData?.ACTION_CODE === ContractAction.VERIFY_ACC) {
+      global.setTimeout(scrollToContractCard, 500);
+    }
+  }, [screenData, scrollToContractCard]);
+
   const handleGetLoan = async (item: CCustProd) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
 
     try {
-      // Handle specific product types
+      if (screenData?.ACTION_CODE === ContractAction.VERIFY_ACC) {
+        showToast(screenData.TITLE, screenData.DESCR, "error");
+        scrollToContractCard();
+        return;
+      }
+
       if (
         item?.APP_PROD_TYPE === Config.DEPOSIT_PROD_TYPE ||
         item?.APP_PROD_TYPE === Config.PHONE_PROD_TYPE
@@ -168,7 +204,9 @@ const Home = ({ navigation }: any) => {
             "Та зээл хүлээн авах банкны дансаа холбоно уу",
             "error"
           );
-          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "bank" });
+          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+            step: "bank",
+          });
           return;
         }
 
@@ -178,7 +216,9 @@ const Home = ({ navigation }: any) => {
             "Та зээл авахын тулд баталгаaжуулах пин кодоо үүсгэнэ үү",
             "error"
           );
-          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "pin" });
+          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+            step: "pin",
+          });
           return;
         }
 
@@ -188,7 +228,9 @@ const Home = ({ navigation }: any) => {
             "Та зээл авахын тулд холбоо барих имэйл хаягаа бүртгүүлнэ үү",
             "error"
           );
-          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "email" });
+          await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+            step: "email",
+          });
           return;
         }
 
@@ -202,7 +244,6 @@ const Home = ({ navigation }: any) => {
         return;
       }
 
-      // Handle expired credit score
       if (item?.CS_EXPIRED === "Y") {
         const limitRenewAmt = context?.state.configData?.limitRenewAmt;
         if (limitRenewAmt && limitRenewAmt > 0) {
@@ -223,12 +264,11 @@ const Home = ({ navigation }: any) => {
         }
       }
 
-      // Handle non-expired cases
       const checkResult = await checkBeforeLoan(item);
 
-      // Success path
       if (checkResult.int_result === 0) {
         setIsLoading(true);
+
         if (item?.APP_PROD_TYPE === Config.CAR_PROD_TYPE) {
           await routePush(SCREENS.CAR_ONBOARD, {
             product: JSON.stringify(item),
@@ -242,12 +282,12 @@ const Home = ({ navigation }: any) => {
         return;
       }
 
-      // Handle various error conditions
       if (!checkResult) {
         showToast("Анхааруулах", "Алдаа гарлаа. Дахин оролдоно уу", "error");
         return;
       }
 
+      // Map error codes to actions
       const errorActions: Record<number, () => void> = {
         1: () =>
           showConfirmation(
@@ -270,12 +310,26 @@ const Home = ({ navigation }: any) => {
       };
 
       const handleError = errorActions[checkResult.int_result];
+
       if (handleError) {
         handleError();
         return;
       }
 
-      // Removed: contractActions & handleContract routing
+      // Handle contract related actions
+      const contractActions = [
+        ContractAction.SEND_CONTRACT,
+        ContractAction.RETURN_LOAN,
+        ContractAction.CALC_LOAN_AMT,
+      ];
+
+      if (
+        screenData?.ACTION_CODE &&
+        contractActions.includes(screenData.ACTION_CODE as ContractAction)
+      ) {
+        await handleContract();
+        return;
+      }
 
       // Default error case
       showToast("Анхааруулах", checkResult.str_result, "error");
@@ -286,6 +340,30 @@ const Home = ({ navigation }: any) => {
     }
   };
 
+  const {
+    totalLoanLimit,
+    totalLoanBalance,
+    totalAvailableLoanAmount,
+    percent,
+  } = useMemo(() => {
+    const limit = (custProd || [])
+      .filter((p) => p?.SURVEY !== "Y")
+      .reduce((s, p) => s + (Number(p?.LOAN_LIMIT) || 0), 0);
+
+    const balance = custProd?.length
+      ? Number(custProd[0]?.TOTAL_BALANCE) || 0
+      : 0;
+
+    const available = Math.max(0, limit - balance);
+    const pct = limit > 0 ? Math.min(1, Math.max(0, available / limit)) : 0;
+
+    return {
+      totalLoanLimit: limit,
+      totalLoanBalance: balance,
+      totalAvailableLoanAmount: available,
+      percent: pct,
+    };
+  }, [custProd]);
   const showConfirmation = (message: string, callback: () => void) => {
     setConfirmationTitle("Анхааруулга");
     setConfirmationDesc(message);
@@ -297,54 +375,111 @@ const Home = ({ navigation }: any) => {
   const handleGotoPin = async () => {
     setIsSubmitting(true);
     setIsLoading(true);
-    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "pin" });
+    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+      step: "pin",
+    });
   };
 
   const handleGoToBankAccount = async () => {
     setIsSubmitting(true);
     setIsLoading(true);
-    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "bank" });
+    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+      step: "bank",
+    });
   };
 
   const handleGotoEmail = async () => {
     setIsSubmitting(true);
     setIsLoading(true);
-    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, { step: "email" });
+    await routePush(SCREENS.GET_LOAN_MULTIPLE_FORMS, {
+      step: "email",
+    });
+  };
+
+  const handleContract = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      switch (screenData?.ACTION_CODE) {
+        case ContractAction.CALC_LOAN_AMT: {
+          // Check if fee processing is required
+          const limitDefAmt = context?.state.configData?.limitDefAmt;
+          if (limitDefAmt && limitDefAmt > 0) {
+            const feeResult = await checkContractFee(limitDefAmt);
+            if (!feeResult) return;
+          }
+
+          // Send contract request
+          const sendResult = await sendDefCustomerContract();
+          if (!sendResult) return;
+
+          showToast("Зээлийн эрх бодох хүсэлт хүлээж авлаа");
+          await loadData();
+          break;
+        }
+
+        case ContractAction.VERIFY_ACC:
+          setIsLoading(true);
+          await routePush(SCREENS.UPDATE_LOAN_LIMIT, { mode: "danUpdate" });
+          break;
+
+        case ContractAction.VERIFY_FACE:
+          setIsLoading(true);
+          await routePush(SCREENS.LIVENESS);
+          break;
+
+        case ContractAction.SEND_CONTRACT:
+        case ContractAction.RETURN_LOAN:
+          setIsLoading(true);
+          await routePush(SCREENS.CONTRACT);
+          break;
+      }
+    } catch (error) {
+      handleErrorExpo(error, "handleContract");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleLoanItemPress = async (item: CLoanInfo) => {
     setIsSubmitting(true);
     setIsLoading(true);
-    await routePush(SCREENS.LOAN_DETAIL, { loan: JSON.stringify(item) });
+    await routePush(SCREENS.LOAN_DETAIL, {
+      loan: JSON.stringify(item),
+    });
   };
 
   const toggleItemExpand = (itemId: number) => {
-    setExpandedItems((prev) => ({ ...prev, [itemId]: !prev[itemId] }));
+    setExpandedItems((prev) => ({
+      ...prev,
+      [itemId]: !prev[itemId],
+    }));
   };
 
   return (
     <View className="flex-1 bg-white">
       <HomeHeader title={""} />
       <View className="flex-1">
-        {/* {isLoading ? (
-          <HomeScreenSkeleton />
-        ) : ( */}
         <View className="flex-1">
           <MotiView
             className="flex-1"
             from={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ type: "timing", duration: 500 }}
+            transition={{
+              type: "timing",
+              duration: 500,
+            }}
           >
             <ScrollView
               ref={scrollViewRef}
-              className="flex-1 px-6"
+              className="flex-1 px-3"
               showsVerticalScrollIndicator={false}
-              bounces
+              bounces={true}
               refreshControl={
                 <RefreshControl
                   refreshing={isSubmitting}
-                  tintColor={"#9C4FDD"}
+                  tintColor={"#000"}
                   onRefresh={() => {
                     setIsLoading(true);
                     loadData();
@@ -387,7 +522,7 @@ const Home = ({ navigation }: any) => {
 
                 {custProd.length > 0 && (
                   <MotiView
-                    className="relative -mx-5"
+                    className="relative -mx-3"
                     from={{ opacity: 0, translateY: 20 }}
                     animate={{ opacity: 1, translateY: 0 }}
                     transition={{
@@ -400,7 +535,7 @@ const Home = ({ navigation }: any) => {
                       loop={false}
                       width={windowWidth}
                       snapEnabled={false}
-                      height={windowWidth * 0.48}
+                      height={windowWidth * 0.6}
                       autoPlay={false}
                       data={custProd}
                       mode="parallax"
@@ -420,10 +555,66 @@ const Home = ({ navigation }: any) => {
                         />
                       )}
                     />
+                    <View className="-mx-4 mt-4 border-[0.2px] border-b border-gray-600" />
                   </MotiView>
                 )}
 
-                <View className="">
+                {/* Contract card with ref */}
+                {/* {screenData?.TITLE &&
+                  screenData?.TITLE !== "None" &&
+                  screenData?.TITLE !== "" &&
+                  (screenData?.ACTION_CODE === ContractAction.VERIFY_ACC ||
+                    screenData?.ACTION_CODE === ContractAction.VERIFY_FACE) && (
+                    <MotiView
+                      ref={contractCardRef}
+                      className="relative items-center justify-center"
+                      from={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{
+                        type: "timing",
+                        duration: 600,
+                        delay: 200,
+                      }}
+                    >
+                      <ContractCard
+                        title={screenData?.TITLE}
+                        description={screenData?.DESCR}
+                        reason={screenData?.REASON}
+                        buttonText={screenData?.BUTTON_TEXT}
+                        actionCode={screenData?.ACTION_CODE}
+                        buttonVisible={
+                          screenData?.BUTTON_TEXT !== "None" &&
+                          screenData?.BUTTON_TEXT !== ""
+                        }
+                        buttonOnPress={handleContract}
+                        navigation={navigation}
+                      />
+                      <Text></Text>
+                    </MotiView>
+                  )} */}
+                <View className="mx-3 mt-2 rounded-3xl bg-[#F3F5F9] p-4">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-base text-[#131A43]">
+                      Нийт үлдэгдэл эрх:
+                    </Text>
+                    <Text className="text-2xl font-bold text-[#131A43]">
+                      ₮
+                      {totalAvailableLoanAmount.toLocaleString("mn-MN", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                    </Text>
+                  </View>
+
+                  <View className="mt-3 h-[8px] w-full overflow-hidden rounded-full bg-[#D9DEE8]">
+                    <View
+                      className="h-full rounded-full bg-[#A9B1C6]"
+                      style={{ width: `${percent * 100}%` }}
+                    />
+                  </View>
+                </View>
+
+                <View className="mx-2">
                   <ActiveLoansSection
                     loanList={loanList}
                     isSubmitting={isSubmitting}
@@ -434,7 +625,11 @@ const Home = ({ navigation }: any) => {
                 <MotiView
                   from={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ type: "timing", duration: 600, delay: 700 }}
+                  transition={{
+                    type: "timing",
+                    duration: 600,
+                    delay: 700,
+                  }}
                 >
                   <BannerCarousel
                     data={bannerList}
@@ -446,9 +641,7 @@ const Home = ({ navigation }: any) => {
             </ScrollView>
           </MotiView>
         </View>
-        {/* )} */}
       </View>
-
       <View>
         <Confirmation
           isVisible={isConfirmationVisible}
