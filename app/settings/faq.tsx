@@ -61,20 +61,17 @@ const Faq: React.FC = () => {
   ) => {
     return (
       <View className=" rounded-2xl mb-2 bg-white py-6 shadow-sm shadow-black pr-4 ">
-        {/* Blue corner badge */}
         <View className="absolute left-0 top-0 h-14 w-14 items-center justify-center rounded-br-full rounded-tl-2xl bg-[#2E53F1]">
           <View className="self-center absolute top-4 left-4">
             <SvgIcon name="faq_corner" width={16} height={16} color="#FFFFFF" />
           </View>
         </View>
 
-        {/* Title row */}
         <View className="flex-row items-start">
           <Text className="flex-1 pl-16 pr-3 text-[15px] font-semibold leading-5 text-[#163660]">
             {section.QUE}
           </Text>
 
-          {/* Plus / minus */}
           <View className="ml-2 h-6 w-6 items-center justify-center rounded-md bg-transparent">
             <Text className="text-2xl leading-6 text-[#7787A6]">
               {isActive ? "–" : "+"}
@@ -85,7 +82,6 @@ const Faq: React.FC = () => {
     );
   };
 
-  /** Card content (answer) */
   const renderContent = (
     section: CFaqItem & { groupName?: string },
     index: number,
@@ -93,7 +89,7 @@ const Faq: React.FC = () => {
   ) => {
     return (
       <View className=" mb-3 rounded-2xl  px-4 pb-4 pt-3 shadow-sm shadow-black bg-white ">
-        <Text className="pl-12 pr-2 text-[13px] leading-5 text-[#1B3C69]">
+        <Text className="pl-4 pr-2 text-[13px] leading-5 text-[#1B3C69]">
           {section.ANS}
         </Text>
       </View>

@@ -88,7 +88,7 @@ const Invite = () => {
         textColor="#1B3C69"
         onBack={() => router.back()}
         showBottomLine={false}
-        bgColor="black"
+        bgColor="white"
       />
 
       <CustomScrollView>

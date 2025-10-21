@@ -489,13 +489,7 @@ const Home = ({ navigation }: any) => {
             >
               <View className="flex-1">
                 <View className="flex-row items-start justify-start ">
-                  <TouchableOpacity
-                    className="my-3 ml-3 flex-row items-center gap-3"
-                    onPress={async () => {
-                      setIsLoading(true);
-                      await routePush(SCREENS.PERSONAL);
-                    }}
-                  >
+                  <TouchableOpacity className="my-3 ml-3 flex-row items-center gap-3">
                     <View className="h-16 w-16 items-center justify-center overflow-hidden rounded-3xl p-1 bg-[#F3F5F9] shadow-2xl ">
                       {currentCustomer?.AVATAR_URL ? (
                         <Image

@@ -445,14 +445,14 @@ const Login = () => {
                     />
                   </View>
 
-                  {isShowBioButton && (
+                  {/* {isShowBioButton && (
                     <IconButton
                       icon={bioType}
                       className="p-4"
                       onPress={handleBioMetric}
                       disabled={isSubmitting}
                     />
-                  )}
+                  )} */}
                 </View>
               </View>
             </View>
