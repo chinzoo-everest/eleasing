@@ -61,7 +61,7 @@ const Login = () => {
     resolver: yupResolver(loginFromSchema),
     defaultValues: {
       username: "80444997",
-      password: "Test1234!",
+      password: "Test1234*",
     },
   });
 

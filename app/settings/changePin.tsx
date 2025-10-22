@@ -10,12 +10,15 @@ import { showToast } from "@utils/showToast";
 import { changePinCodeFormSchema } from "@utils/validators";
 import React, { useContext, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { handleErrorExpo } from "@utils/handleErrorOnExpo";
 import ChangePassword from "./changePass";
 import ChangePasswordInput from "@components/ChangePasswordInput";
+import { routePush } from "@utils/routePush";
+import { SCREENS } from "@customConfig/route";
+import { cn } from "@utils/cn";
 
 const ChangePin = () => {
   const router = useRouter();
@@ -83,7 +86,7 @@ const ChangePin = () => {
         </View>
 
         {/* Inputs */}
-        <View className="mt-10 px-6 space-y-6">
+        <View className=" px-6 ">
           {/* Old PIN */}
           <View className="mb-16">
             <Controller
@@ -150,7 +153,28 @@ const ChangePin = () => {
         </View>
 
         {/* Buttons */}
-        <View className="mx-6 mt-10 mb-10">
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmit)}
+          className={cn(
+            "flex-row items-center justify-center rounded-2xl bg-[#2E53F1] py-5 mb-4 mx-4"
+          )}
+          style={{ bottom: (insets.bottom || 0) + 8 }}
+        >
+          <Text className="text-base font-medium text-white">Хадгалах</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={handleRecoverPinCode}
+          className={cn(
+            "absolute left-4 right-4 flex-row items-center justify-center rounded-2xl bg-[#E7EBF1] py-5"
+          )}
+          style={{ bottom: (insets.bottom || 0) + 8 }}
+        >
+          <Text className="text-base font-medium text-[#1B3C69]">
+            Пин код сэргээх
+          </Text>
+        </TouchableOpacity>
+
+        {/* <View className="mx-6 mt-10 mb-10">
           <Button
             className="w-full  rounded-2xl py-4"
             isLoading={isSubmitting}
@@ -167,7 +191,7 @@ const ChangePin = () => {
             fillColor="#E7EBF1"
             textColor="#1B3C69"
           />
-        </View>
+        </View> */}
       </CustomScrollView>
     </View>
   );

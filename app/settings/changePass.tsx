@@ -7,7 +7,7 @@ import { LogOutUser } from "@services/auth.service";
 import { changePasswordFormSchema } from "@utils/validators";
 import React, { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import PasswordCretCorrect from "@assets/images/pass.svg";
 import PasswordCretWrong from "@assets/images/reject.svg";
 import CustomScrollView from "@components/CustomScrollView";
@@ -16,6 +16,9 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { handleErrorExpo } from "@utils/handleErrorOnExpo";
 import ChangePasswordInput from "@components/ChangePasswordInput";
+import { routePush } from "@utils/routePush";
+import { SCREENS } from "@customConfig/route";
+import { cn } from "@utils/cn";
 
 const ChangePassword = () => {
   const router = useRouter();
@@ -184,6 +187,7 @@ const ChangePassword = () => {
         </View>
 
         {/* Buttons */}
+
         <View className="mx-6 mt-10 mb-10 ">
           <Button
             className="w-full  rounded-2xl py-4"
@@ -193,15 +197,6 @@ const ChangePassword = () => {
             fillColor="#2A45C4"
             text="Хадгалах"
             disabled={!allCriteriaMet}
-          />
-
-          <Button
-            className="w-full bg-[#E9EDF5] rounded-2xl mt-3 py-4"
-            onPress={() => router.back()}
-            text="Нууц үг сэргээх"
-            isTextBold
-            fillColor="#E7EBF1"
-            textColor="#1B3C69"
           />
         </View>
       </CustomScrollView>

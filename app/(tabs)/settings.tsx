@@ -100,7 +100,7 @@ const Personal = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <HomeHeader title={"asdasd"} />
+      <HomeHeader title={""} />
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Profile Section */}
         <View className="mt-8 items-center">

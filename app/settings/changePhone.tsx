@@ -74,14 +74,18 @@ const ChangePhone = () => {
         {/* Content Section */}
         <View className="flex-1 items-center justify-start px-6 mt-8">
           {/* Subtitle */}
-          <Text className="text-[#768AA4] text-center mb-10 leading-6 mx-5 ">
+          <Text className="text-[#1B3C69] text-center mb-10 leading-6 mx-5 ">
             Заавал өөрийн утасны дугаарыг оруулах бөгөөд таны дугаарт
             баталгаажуулах код илгээж баталгаажуулна.
           </Text>
 
           {/* ✅ SVG Illustration */}
           <View className="items-center mb-20">
-            <Image source={require("@assets/images/changephone.png")} />
+            <Image
+              source={require("@assets/images/changephone.png")}
+              resizeMode="contain"
+              className="w-[278px] h-[278px]"
+            />
           </View>
 
           {/* Input Field */}

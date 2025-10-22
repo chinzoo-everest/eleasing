@@ -185,6 +185,8 @@ const icons: Record<string, React.FC<SvgProps>> = {
   header_back: require("@assets/images/headerback.svg").default,
   phone_outline: require("@assets/images/edit_link.svg").default,
   edit_link: require("@assets/images/phone_outline.svg").default,
+  header_det: require("@assets/images/headerdetail.svg").default,
+  header_menu: require("@assets/images/header_menu.svg").default,
 };
 
 export default icons;

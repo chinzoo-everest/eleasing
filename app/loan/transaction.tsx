@@ -53,7 +53,7 @@ const Transaction = () => {
       {transactionList.length === 0 && (
         <View className="flex-1 items-center justify-center px-10">
           <Text className="text-light text-center text-sm text-[#1B3C69] opacity-60">
-            Гүйлгээний түүх ирээгүй байна
+            Гүйлгээний түүх байхгүй байна
           </Text>
         </View>
       )}

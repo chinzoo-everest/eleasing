@@ -28,12 +28,12 @@ const HomeHeader = ({
         onClose={() => setSidebarVisible(false)}
       />
 
-      <View className="mb-2 flex-row items-center justify-between bg-red-400">
+      <View className="mb-2 flex-row items-center justify-between ">
         <TouchableOpacity
           onPress={() => setSidebarVisible(true)}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <SvgIcon name="noti_bell" width={24} height={24} />
+          <SvgIcon name="header_menu" width={24} height={24} />
         </TouchableOpacity>
         <Text>{title}</Text>
         {isShowNotification ? (

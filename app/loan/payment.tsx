@@ -24,6 +24,7 @@ import {
 import CustomScrollView from "@components/CustomScrollView";
 import { MotiView } from "moti";
 import SvgIcon from "@components/SvgIcon";
+import HeaderDetail from "@components/HeaderDetail";
 
 const Payment = () => {
   const insets = useSafeAreaInsets();
@@ -642,8 +643,9 @@ const Payment = () => {
   );
 
   return (
-    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
-      <Header
+    <View className="flex-1 bg-white">
+      <View style={{ paddingTop: insets.top }} className="bg-[#001165]" />
+      <HeaderDetail
         title={
           type === "close"
             ? "Зээл хаах"

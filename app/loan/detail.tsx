@@ -1,4 +1,4 @@
-import Header from "@components/Header";
+import HeaderDetail from "@components/HeaderDetail";
 import SvgIcon from "@components/SvgIcon";
 import { SCREENS } from "@customConfig/route";
 import {
@@ -187,8 +187,9 @@ const LoanDetail = () => {
   };
 
   return (
-    <View className="flex-1 bg-[#fff]" style={{ paddingTop: insets.top }}>
-      <Header
+    <View className="flex-1 bg-[#fff]">
+      <View style={{ paddingTop: insets.top }} className="bg-[#0A1A64]" />
+      <HeaderDetail
         title="Дижитал зээл"
         onBack={router.back}
         textColor="white"

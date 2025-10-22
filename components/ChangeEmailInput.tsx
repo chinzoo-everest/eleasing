@@ -13,6 +13,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { cn } from "@utils/cn";
+import SvgIcon from "./SvgIcon";
 
 type Props = {
   label?: string;
@@ -82,8 +83,10 @@ const ChangeEmailInput = forwardRef(
           onPress={() => textInputRef.current?.focus()}
         >
           <View className="flex-row items-center justify-between mb-1.5">
-            <Text className="text-[#768AA4] text-sm">{label}</Text>
-
+            <View className="flex-row items-center">
+              <SvgIcon name="email" width={20} height={20} />
+              <Text className="ml-2 text-[#768AA4] text-sm">{label}</Text>
+            </View>
             <TextInput
               ref={textInputRef}
               value={textValue}

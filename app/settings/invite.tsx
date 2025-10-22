@@ -96,7 +96,7 @@ const Invite = () => {
         <View className="mt-5 px-5 flex-1 items-center">
           {/* Title */}
 
-          <Text className="text-[#768AA4] text-center mb-6">
+          <Text className="text-[#1B3C69] text-center mb-6">
             Та урих найзынхаа утасны дугаарыг оруулна уу!
           </Text>
 

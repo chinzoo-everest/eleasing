@@ -19,7 +19,7 @@ const LoanGraphicListItem: React.FC<Props> = ({
     <View className="rounded-xl px-2 py-4" key={itemIndex}>
       <View className="flex-row items-center">
         <Text
-          className={cn("text-xs font-medium mb-2")}
+          className={cn("text-sm font-medium mb-2 text-[#1B3C69]")}
           style={{
             color: getProductColorByType(Number(prodType)),
           }}
@@ -29,6 +29,14 @@ const LoanGraphicListItem: React.FC<Props> = ({
       </View>
 
       <View className="flex-col">
+        <View className="flex-row justify-between mb-1">
+          <Text className="text-lg font-semibold text-[#1B3C69]">
+            Нийт төлөх
+          </Text>
+          <Text className="self-center text-xl font-bold text-[#1B3C69]">
+            {item.TOTAL?.toLocaleString("mn-MN") || "0"}
+          </Text>
+        </View>
         <View className=" h-px w-full bg-[#1B3C69] opacity-60" />
         <View className=" flex-row justify-between my-1">
           <Text className="text-sm text-[#1B3C69]">Зээлээс төлөх</Text>
@@ -50,14 +58,6 @@ const LoanGraphicListItem: React.FC<Props> = ({
           </Text>
         </View>
       </View>
-
-      <View className="flex-row justify-between">
-        <Text className="text-lg text-[#1B3C69]">Нийт төлөх</Text>
-        <Text className="self-center text-sm font-bold text-[#1B3C69]">
-          {item.TOTAL?.toLocaleString("mn-MN") || "0"}
-        </Text>
-      </View>
-      <View className="h-[1px] w-full bg-[#1B3C69] mt-4" />
     </View>
   );
 };
