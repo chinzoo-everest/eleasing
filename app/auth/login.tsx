@@ -60,8 +60,8 @@ const Login = () => {
   } = useForm({
     resolver: yupResolver(loginFromSchema),
     defaultValues: {
-      username: "80444997",
-      password: "Test1234*",
+      username: "94047404",
+      password: "Anu1234!",
     },
   });
 

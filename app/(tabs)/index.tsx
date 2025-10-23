@@ -96,42 +96,6 @@ const Home = ({ navigation }: any) => {
 
         const configData = await loadConfigData(dispatch);
         const result = await loadCustomerData(dispatch);
-        if (result?.cust_prod) {
-          console.log(
-            "[Home] fetched cust_prod (raw):",
-            result.cust_prod.map((p) => ({
-              id: p?.ID,
-              type: p?.APP_PROD_TYPE,
-              limit: p?.LOAN_LIMIT,
-              expired: p?.CS_EXPIRED,
-            }))
-          );
-          setCustProd(result.cust_prod);
-        } else {
-          console.log("[Home] fetched cust_prod: EMPTY or undefined");
-        }
-        if (result?.cust_prod) {
-          const normalized = result.cust_prod
-            .map((p) => ({
-              ...p,
-              APP_PROD_TYPE:
-                p.APP_PROD_TYPE ?? p.PROD_TYPE ?? p.PROD_TYPE ?? null,
-            }))
-            .filter((p) => !!p.APP_PROD_TYPE);
-
-          console.log(
-            "[Home] normalized cust_prod:",
-            normalized.map((p) => ({
-              id: p?.ID,
-              type: p?.APP_PROD_TYPE,
-              limit: p?.LOAN_LIMIT,
-            }))
-          );
-
-          setCustProd(normalized);
-        } else {
-          setCustProd([]);
-        }
 
         let customerInfo: CCustomer;
         if (result?.customer) {
@@ -200,15 +164,6 @@ const Home = ({ navigation }: any) => {
       setIsSubmitting(false);
     }
   };
-  const displayCustProd = useMemo(() => {
-    return (
-      (custProd ?? [])
-        .filter((p) => p?.SURVEY !== "Y")
-        .filter((p) => !!p?.APP_PROD_TYPE)
-        // OPTIONAL: hide zero-limit products
-        .filter((p) => Number(p?.LOAN_LIMIT) > 0)
-    );
-  }, [custProd]);
 
   const scrollToContractCard = useCallback(() => {
     if (contractCardRef.current && scrollViewRef.current) {
@@ -560,7 +515,7 @@ const Home = ({ navigation }: any) => {
                   </TouchableOpacity>
                 </View>
 
-                {displayCustProd.length > 0 && (
+                {custProd.length > 0 && (
                   <MotiView
                     className="relative -mx-3"
                     from={{ opacity: 0, translateY: 20 }}
@@ -589,7 +544,7 @@ const Home = ({ navigation }: any) => {
                           screenData={screenData}
                           handleGetLoan={handleGetLoan}
                           cardWidth={
-                            custProd.length > 1 ? windowWidth : windowWidth
+                            custProd.length > 0 ? windowWidth : windowWidth
                           }
                           index={index}
                         />
