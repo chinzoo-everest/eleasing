@@ -176,6 +176,7 @@ const icons: Record<string, React.FC<SvgProps>> = {
   show: require("@assets/images/settings_hidepass.svg").default,
   chard: require("@assets/images/chard.svg").default,
   normal: require("@assets/images/pass.svg").default,
+  pass: require("@assets/images/normal.svg").default,
   branch_phone: require("@assets/images/branch_phone.svg").default,
   exceeded: require("@assets/images/reject.svg").default,
   receipt: require("@assets/images/receipt.svg").default,
@@ -187,6 +188,7 @@ const icons: Record<string, React.FC<SvgProps>> = {
   edit_link: require("@assets/images/phone_outline.svg").default,
   header_det: require("@assets/images/headerdetail.svg").default,
   header_menu: require("@assets/images/header_menu.svg").default,
+  changepass: require("@assets/images/changepassfield.svg").default,
 };
 
 export default icons;

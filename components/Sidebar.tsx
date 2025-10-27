@@ -30,7 +30,7 @@ const Sidebar = ({
   onClose: () => void;
 }) => {
   const insets = useSafeAreaInsets();
-  const [showConfirm, setShowConfirm] = useState(false); // ← нэмэв
+  const [showConfirm, setShowConfirm] = useState(false);
 
   const [slideAnim] = useState(new Animated.Value(-width));
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -120,10 +120,20 @@ const Sidebar = ({
               showsVerticalScrollIndicator={false}
             >
               <View className="px-10 py-6">
+                {/* <SidebarItem
+                  icon="archive"
+                  text="Бонус"
+                  onPress={() => handleNavigate(SCREENS.SETTINGS_BONUS)}
+                /> */}
                 <SidebarItem
                   icon="archive"
                   text="Зээлийн архив"
                   onPress={() => handleNavigate(SCREENS.LOAN_ARCHIVE)}
+                />
+                <SidebarItem
+                  icon="terms"
+                  text="Банкны данс"
+                  onPress={() => handleNavigate(SCREENS.BANK)}
                 />
                 <SidebarItem
                   icon="faq"

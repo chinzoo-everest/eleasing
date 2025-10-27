@@ -26,7 +26,7 @@ const QPay = () => {
         onBack={() => router.back()}
         bgColor="#fff"
         textColor="#1A1A1A"
-        showBottomLine={true}
+        showBottomLine={false}
       />
 
       <CustomScrollView>

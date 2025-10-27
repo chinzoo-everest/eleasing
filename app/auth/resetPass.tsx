@@ -100,7 +100,7 @@ const ResetPass = () => {
         <View className="mt-5 flex-1 px-4">
           <View className="self-center">
             <Image
-              source={require("@assets/images/reset_phone.png")}
+              source={require("@assets/images/resetphone.png")}
               style={{ width: 278, height: 278, marginBottom: 20 }}
               resizeMode="contain"
             />

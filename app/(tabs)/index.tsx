@@ -351,9 +351,7 @@ const Home = ({ navigation }: any) => {
       .filter((p) => p?.SURVEY !== "Y")
       .reduce((s, p) => s + (Number(p?.LOAN_LIMIT) || 0), 0);
 
-    const balance = custProd?.length
-      ? Number(custProd[0]?.TOTAL_BALANCE) || 0
-      : 0;
+    const balance = custProd?.length ? Number(custProd[0]?.LOAN_LIMIT) || 0 : 0;
 
     const available = Math.max(0, limit - balance);
     const pct = limit > 0 ? Math.min(1, Math.max(0, available / limit)) : 0;

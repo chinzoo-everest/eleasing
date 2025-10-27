@@ -14,44 +14,36 @@ import { parseResponseData } from "@utils/parseResponseData";
 import { routePush } from "@utils/routePush";
 import { showToast } from "@utils/showToast";
 import { router, useLocalSearchParams } from "expo-router";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-const LoanDetail = () => {
+const LoanDetail: React.FC = () => {
   const { loan } = useLocalSearchParams();
   const [loanData, setLoanData] = useState<CLoanInfo>();
-  const [extendLoanVisible, setExtendLoanVisible] = useState(false);
+  const [extendLoanVisible, setExtendLoanVisible] = useState<boolean>(false);
   const [currentCalc, setCurrentCalc] = useState<CLoanCalc>();
-  const [isCanPrepaid, setIsCanPrepaid] = useState(false);
+  const [isCanPrepaid, setIsCanPrepaid] = useState<boolean>(false);
   const insets = useSafeAreaInsets();
 
-  // ===== Load loan data and calculations =====
-  const loadData = useCallback(async (loanString: string) => {
-    console.log("loadData called with loan:", loanString);
+  const loadData = useCallback(async (loanString: string): Promise<void> => {
     try {
       const loanTemp = parseResponseData<CLoanInfo>(loanString);
-      console.log("Parsed loanTemp:", loanTemp);
       setLoanData(loanTemp);
 
       const jsonObj = await loadCurrentCalc(loanTemp);
-      if (jsonObj) {
-        console.log("Loaded currentCalc:", jsonObj.data);
-        setCurrentCalc(jsonObj.data);
-      }
+      if (jsonObj) setCurrentCalc(jsonObj.data);
 
       if (loanTemp.PERIOD_TYPE === "MONTH") {
         const prepaidResult = await checkPrepaidLoan(loanTemp);
-        console.log("Prepaid result:", prepaidResult);
         if (prepaidResult) setIsCanPrepaid(true);
       }
 
       if (loanTemp.EXT_IS_ACTIVE === "Y") {
         const canExtend = await checkLoanExtendLimit(loanTemp);
-        console.log("Can extend:", canExtend);
         if (canExtend) {
           const nextPayDate = new Date(
-            loanTemp.NEXT_PAY_DATE?.split("T")[0] + "T12:00:00" || ""
+            (loanTemp.NEXT_PAY_DATE?.split("T")[0] || "") + "T12:00:00"
           );
           const beginDate = new Date(nextPayDate);
           beginDate.setDate(beginDate.getDate() - (loanTemp.EXT_PRIV_DAY || 0));
@@ -63,25 +55,20 @@ const LoanDetail = () => {
           );
 
           if (beginDate <= today && today <= futureDate) {
-            console.log("Extend loan is visible");
             setExtendLoanVisible(true);
           }
         }
       }
     } catch (error) {
-      console.error("loadData failed:", error);
       handleErrorExpo(error, "loadLoanDetailData");
     }
   }, []);
 
   useEffect(() => {
-    console.log("LoanDetail Mounted. loan param =", loan);
-    loadData(loan as string);
+    if (loan) loadData(loan as string);
   }, [loan, loadData]);
 
-  // ===== Derived calculations (frontend logic replication) =====
   const derived = useMemo(() => {
-    console.log("useMemo triggered with loanData:", loanData);
     if (!loanData) return null;
     const SERVICE_AMT = loanData.SERVICE_AMT || 0;
     const LOAN_FEE = loanData.LOAN_FEE || 0;
@@ -99,14 +86,6 @@ const LoanDetail = () => {
     const REMAINING_TOTAL_FEE = REMAINING_FEE + REMAINING_PRE;
     const TOTAL_PERIOD_BALANCE = LOAN_AMT + INT_AMT + LOSS_AMT;
 
-    console.log("==== Derived Loan Data ====");
-    console.log("REMAINING_FEE:", REMAINING_FEE);
-    console.log("REMAINING_PRE:", REMAINING_PRE);
-    console.log("IS_FEE_PAY:", IS_FEE_PAY);
-    console.log("IS_PRE_PAY:", IS_PRE_PAY);
-    console.log("REMAINING_TOTAL_FEE:", REMAINING_TOTAL_FEE);
-    console.log("TOTAL_PERIOD_BALANCE:", TOTAL_PERIOD_BALANCE);
-
     return {
       REMAINING_FEE,
       REMAINING_PRE,
@@ -116,73 +95,121 @@ const LoanDetail = () => {
       TOTAL_PERIOD_BALANCE,
     };
   }, [loanData]);
+
   const remainingPre = Math.max(0, derived?.REMAINING_PRE ?? 0);
+  const remainingFee = Math.max(0, derived?.REMAINING_FEE ?? 0);
+  const accountPayEnabled = remainingPre <= 0 && remainingFee <= 0;
+  const hasDues = useMemo<boolean>(
+    () => Boolean(derived?.IS_FEE_PAY || derived?.IS_PRE_PAY),
+    [derived]
+  );
+
   const payTotal =
     (currentCalc?.loanAmt ?? 0) +
     (currentCalc?.intAmt ?? 0) +
     (currentCalc?.lossAmt ?? 0);
 
-  const remainingFee = Math.max(0, derived?.REMAINING_FEE ?? 0);
+  useEffect(() => {}, [
+    derived,
+    remainingPre,
+    remainingFee,
+    accountPayEnabled,
+    payTotal,
+    currentCalc,
+  ]);
 
-  // ===== Navigation handlers =====
-  const handlePayment = async (type: "normal" | "prePay" | "close") => {
-    console.log("Navigating to payment:", type);
+  const handlePayment = async (
+    type: "normal" | "prePay" | "close"
+  ): Promise<void> => {
+    if (!accountPayEnabled && type !== "prePay") {
+      await handlePayFeeOrPre();
+      return;
+    }
     await routePush(SCREENS.PAYMENT, {
       loan: JSON.stringify(loanData),
       type,
+      lockAccountTab: remainingPre > 0 || remainingFee > 0,
     });
   };
 
-  const handleLoanGraphic = async () => {
-    console.log("Opening loan graphic");
-    await routePush(SCREENS.LOAN_GRAPHIC, {
-      loan: JSON.stringify(loanData),
-    });
+  const handleLoanGraphic = async (): Promise<void> => {
+    await routePush(SCREENS.LOAN_GRAPHIC, { loan: JSON.stringify(loanData) });
   };
 
-  const handleDeposit = async () => {
-    console.log("Opening deposit details");
+  const handleDeposit = async (): Promise<void> => {
     await routePush(SCREENS.DEPOSIT, { loan: JSON.stringify(loanData) });
   };
 
-  const handleTransfer = async () => {
-    console.log("Opening transaction history");
+  const handleTransfer = async (): Promise<void> => {
     await routePush(SCREENS.TRANSACTION, { loan: JSON.stringify(loanData) });
   };
 
-  const handlePayFeeOrPre = async () => {
+  const handlePayFeeOrPre = async (): Promise<void> => {
     try {
-      const remainingFee = derived?.REMAINING_FEE || 0;
-      const remainingPre = derived?.REMAINING_PRE || 0;
-      console.log("handlePayFeeOrPre triggered");
-      console.log("Remaining Fee:", remainingFee);
-      console.log("Remaining Pre:", remainingPre);
+      const rFee = derived?.REMAINING_FEE || 0;
+      const rPre = derived?.REMAINING_PRE || 0;
 
-      if (remainingFee > 0) {
-        console.log("Routing to FEE payment");
+      if (rFee > 0) {
         await routePush(SCREENS.PAYMENT, {
           loan: JSON.stringify(loanData),
           type: "fee",
-          amount: remainingFee,
+          amount: rFee,
+          lockAccountTab: true,
         });
         return;
       }
 
-      if (remainingPre > 0) {
-        console.log("Routing to PREPAY payment");
+      if (rPre > 0) {
         await routePush(SCREENS.PAYMENT, {
           loan: JSON.stringify(loanData),
           type: "prePay",
-          amount: remainingPre,
+          amount: rPre,
+          lockAccountTab: true,
         });
         return;
       }
 
-      console.log("No remaining fee or prepay to handle");
       showToast("", "Төлөх шимтгэл эсвэл урьдчилгаа байхгүй байна.", "info");
     } catch (error) {
-      console.error("handlePayFeeOrPre failed:", error);
       handleErrorExpo(error, "handlePayFeeOrPre");
+    }
+  };
+
+  const handlePayFeeOnly = async (): Promise<void> => {
+    try {
+      const rFee = derived?.REMAINING_FEE || 0;
+      if (rFee > 0) {
+        await routePush(SCREENS.PAYMENT, {
+          loan: JSON.stringify(loanData),
+          type: "fee",
+          amount: rFee,
+          lockAccountTab: true,
+          from: "loan_detail_fee",
+        } as unknown as Record<string, unknown>);
+      } else {
+        showToast("", "Шимтгэл төлөх шаардлагагүй.", "info");
+      }
+    } catch (error) {
+      handleErrorExpo(error, "handlePayFeeOnly");
+    }
+  };
+
+  const handlePayPreOnly = async (): Promise<void> => {
+    try {
+      const rPre = derived?.REMAINING_PRE || 0;
+      if (rPre > 0) {
+        await routePush(SCREENS.PAYMENT, {
+          loan: JSON.stringify(loanData),
+          type: "prePay",
+          amount: rPre,
+          lockAccountTab: true,
+          from: "loan_detail_prepay",
+        } as unknown as Record<string, unknown>);
+      } else {
+        showToast("", "Урьдчилгаа төлөх шаардлагагүй.", "info");
+      }
+    } catch (error) {
+      handleErrorExpo(error, "handlePayPreOnly");
     }
   };
 
@@ -206,9 +233,17 @@ const LoanDetail = () => {
           </View>
 
           <View className="flex-row justify-between items-center px-6 py-4 bg-[#F8FBFF]">
+            <View className="items-end">
+              <Text className="text-gray-500 text-sm">
+                Зээлийн гэрээний дугаар
+              </Text>
+              <Text className="font-bold text-lg text-[#0A1A64]">
+                {loanData?.CONTRACT_NO}
+              </Text>
+            </View>
             {new Date() <= new Date(loanData?.PLAN_FINISH || "") ? (
-              <View className="flex-row items-center space-x-2">
-                <SvgIcon name="normal" height={33} width={33} />
+              <View className="flex-row items-center">
+                <SvgIcon name="pass" height={33} width={33} />
                 <Text className="text-[#1B3C69] text-xs font-medium ml-2">
                   хэвийн
                 </Text>
@@ -226,19 +261,10 @@ const LoanDetail = () => {
                 </Text>
               </View>
             )}
-            <View className="items-end">
-              <Text className="text-gray-500 text-sm">
-                Зээлийн гэрээний дугаар
-              </Text>
-              <Text className="font-bold text-lg text-[#0A1A64]">
-                {loanData?.CONTRACT_NO}
-              </Text>
-            </View>
           </View>
 
           <View className="px-6 py-6 bg-[#F8FBFF] rounded-b-3xl">
             <View className="flex-row justify-between">
-              {/* Left Column */}
               <View className="flex-col justify-between">
                 <View className="mb-5">
                   <Text className="text-[#1B3C69] opacity-60 text-sm">
@@ -268,7 +294,6 @@ const LoanDetail = () => {
                 </View>
               </View>
 
-              {/* Right Column */}
               <View className="flex-col justify-between ">
                 <View className="mb-5">
                   <Text className="text-[#1B3C69] opacity-60 text-sm">
@@ -304,68 +329,109 @@ const LoanDetail = () => {
             </View>
           </View>
 
-          <View className="flex-row justify-between mt-5 pb-11">
-            <TouchableOpacity
-              onPress={handleLoanGraphic}
-              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
-            >
-              <SvgIcon name="chard" height={26} width={26} color="#0A1A64" />
-              <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
-                Зээлийн график
-              </Text>
-            </TouchableOpacity>
+          {/* Hide quick action cards when there are dues */}
+          {!hasDues && (
+            <View className="flex-row justify-between mt-5 pb-11">
+              <TouchableOpacity
+                onPress={handleLoanGraphic}
+                className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
+              >
+                <SvgIcon name="chard" height={26} width={26} color="#0A1A64" />
+                <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
+                  Зээлийн график
+                </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={handleDeposit}
-              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
-            >
-              <SvgIcon name="deposit" color="#0A1A64" height={26} width={26} />
-              <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
-                Барьцаа хөрөнгө
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={handleDeposit}
+                className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
+              >
+                <SvgIcon
+                  name="deposit"
+                  color="#0A1A64"
+                  height={26}
+                  width={26}
+                />
+                <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
+                  Барьцаа хөрөнгө
+                </Text>
+              </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={handleTransfer}
-              className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
-            >
-              <SvgIcon name="receipt" color="#0A1A64" height={26} width={26} />
-              <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
-                Гүйлгээний түүх
-              </Text>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity
+                onPress={handleTransfer}
+                className="items-center bg-white py-7 w-[30%] rounded-xl shadow-sm border border-gray-200"
+              >
+                <SvgIcon
+                  name="receipt"
+                  color="#0A1A64"
+                  height={26}
+                  width={26}
+                />
+                <Text className="text-xs mt-5 text-[#0A1A64] font-medium">
+                  Гүйлгээний түүх
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
 
-        {/* Conditional bottom buttons */}
         <View className="px-6 mb-10">
-          {derived?.IS_FEE_PAY || derived?.IS_PRE_PAY ? (
-            <TouchableOpacity
-              onPress={handlePayFeeOrPre}
-              className="w-full py-4 rounded-2xl bg-[#F9A825] items-center"
-            >
-              <Text className="text-white font-bold text-base">
-                {derived?.IS_FEE_PAY ? "Шимтгэл төлөх" : "Урьдчилгаа төлөх"}
-              </Text>
-            </TouchableOpacity>
+          {hasDues ? (
+            <>
+              {derived?.IS_FEE_PAY && (
+                <TouchableOpacity
+                  onPress={handlePayFeeOnly}
+                  className="w-full py-4 rounded-2xl bg-[#F9A825] items-center mb-3 mt-8"
+                >
+                  <Text className="text-white font-bold text-base">
+                    Шимтгэл төлөх
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              {derived?.IS_PRE_PAY && (
+                <TouchableOpacity
+                  onPress={handlePayPreOnly}
+                  className="w-full py-4 rounded-2xl bg-[#65E33F] items-center"
+                >
+                  <Text className="text-white font-bold text-base">
+                    Урьдчилгаа төлөх
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </>
           ) : (
             <>
               <TouchableOpacity
-                onPress={() => handlePayment("normal")}
-                className="w-full py-4 mb-3 rounded-2xl bg-[#00C853] items-center"
-              >
-                <Text className="text-white font-bold text-base">
-                  Зээл төлөх
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
                 onPress={() => handlePayment("close")}
-                className="w-full py-4 rounded-2xl bg-[#1E40AF] items-center"
+                className="w-full py-4 rounded-2xl bg-[#1E40AF] items-center mb-3"
               >
                 <Text className="text-white font-bold text-base">
                   Зээл хаах
                 </Text>
               </TouchableOpacity>
+              <View className="flex-row gap-3">
+                <TouchableOpacity
+                  onPress={() => handlePayment("normal")}
+                  className="flex-1 py-4 rounded-2xl bg-[#65E33F] items-center"
+                >
+                  <Text className="text-white font-bold text-base">
+                    Зээл төлөх
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  disabled={!isCanPrepaid}
+                  onPress={() => handlePayment("prePay")}
+                  className={`flex-1 py-4 rounded-2xl items-center ${
+                    isCanPrepaid ? "bg-[#65E33F]" : "bg-gray-300"
+                  } ${isCanPrepaid ? "" : "opacity-60"}`}
+                >
+                  <Text className="text-white font-bold text-base">
+                    Урьдчилж төлөх
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </>
           )}
         </View>

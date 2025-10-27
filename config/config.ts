@@ -18,10 +18,10 @@ export enum Config {
   DIGITAL_PROD_TYPE = 1,
 
   BASE_URL = "https://e-leasing.everestapp.mn",
-  BANK_STATEMENT_INSTRUCTION_URL = "https://cloud.everestapp.mn/documents/document/carzeel-statement-instruction/",
+  BANK_STATEMENT_INSTRUCTION_URL = "https://cloud.everestapp.mn/documents/document/eLeasing-statement-instruction/",
   TERMS_SERVICE_URL = "https://cloud.everestapp.mn/documents/document/hleasing-terms/",
-  ALERT_URL = "https://cloud.everestapp.mn/documents/document/carzeel-credit-new/",
-  ALERT_URL2 = "https://cloud.everestapp.mn/documents/document/carzeel-credit-update/",
+  ALERT_URL = "https://cloud.everestapp.mn/documents/document/eleasing_credit_new/",
+  ALERT_URL2 = "https://cloud.everestapp.mn/documents/document/eleasing_credit_update/",
   DOCUMENT_URL = "https://cloud.everestapp.mn/documents/document/",
   REGISTER_WEBVIEW_URL = "https://e-leasing.everestapp.mn/mn/register/",
   REPORT_PAGE_URL = "https://cloud.everestapp.mn/documents/report/",

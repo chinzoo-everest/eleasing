@@ -94,19 +94,16 @@ const SettingsInput = forwardRef(
 
     return (
       <View className={cn("w-full mb-5", className)} {...props}>
-        {/* Label row */}
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => textInputRef.current?.focus()}
         >
           <View className="flex-row items-center justify-between mb-1">
-            {/* Left side: icon + label */}
             <View className="flex-row items-center space-x-2">
-              <SvgIcon name={""} width={20} height={20} />
+              <SvgIcon name={"changepass"} width={20} height={20} />
               <Text className="text-[#768AA4] text-sm ml-2">{label}</Text>
             </View>
 
-            {/* Right side: input + eye icon */}
             <View className="flex-row items-center">
               <TextInput
                 ref={textInputRef}
@@ -129,7 +126,6 @@ const SettingsInput = forwardRef(
                 }}
               />
 
-              {/* Eye icon (toggle password visibility) */}
               {mode === "password" && (
                 <TouchableOpacity
                   onPress={() => setIsShowPassIcon(!isShowPassIcon)}

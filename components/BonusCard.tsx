@@ -1,15 +1,14 @@
-import React from 'react';
-import {Text, View} from 'react-native';
+import React from "react";
+import { Text, View } from "react-native";
 
-import Button from './Button';
-import {CCustProd} from '@type/interfaces/Customer';
-import {scale} from '@app/utils/scaling';
-import {routePush} from '@utils/routePush';
+import Button from "./Button";
+import { CCustProd } from "@type/interfaces/Customer";
+import { routePush } from "@utils/routePush";
 
 type Props = {
   navigation: any;
   source: CCustProd;
-  page?: 'home' | 'bonus';
+  page?: "home" | "bonus";
   cardWidth?: number;
   handleGetLoan?: (source: CCustProd) => void;
 };
@@ -30,10 +29,8 @@ const LoanCard = ({
           <View className="flex flex-col space-y-2">
             <Text className="text-tPrimary text-sm uppercase">зээлийн эрх</Text>
             <View className="bg-bgThird w-full rounded-md p-3">
-              <Text
-                className="text-primary text-2xl font-bold"
-                style={{fontSize: scale(24)}}>
-                {source.LOAN_LIMIT.toLocaleString('mn-MN')}
+              <Text className="text-primary text-2xl font-bold">
+                {source.LOAN_LIMIT.toLocaleString("mn-MN")}
               </Text>
             </View>
           </View>
@@ -52,7 +49,7 @@ const LoanCard = ({
             fillColor="#34837B"
             isTextBold={true}
             onPress={() => {
-              routePush('../../loan/bonuscarddetail');
+              routePush("../../loan/bonuscarddetail");
             }}
           />
         </View>

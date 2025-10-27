@@ -1,35 +1,35 @@
-import {useLocalSearchParams, useRouter} from 'expo-router';
-import React, {useContext, useEffect, useState} from 'react';
-import {Text, View, Image} from 'react-native';
-import {Controller, useForm} from 'react-hook-form';
-import {yupResolver} from '@hookform/resolvers/yup';
-import {GlobalContext} from '@context/GlobalContext';
-import {CCustBank, CCustomer} from '@type/interfaces/Customer';
-import {CBank} from '@type/interfaces/Combo';
-import {bankFormSchema} from '@utils/validators';
-import {loadCustomerData} from '@services/home.service';
-import {showToast} from '@utils/showToast';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import React, { useContext, useEffect, useState } from "react";
+import { Text, View, Image } from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { GlobalContext } from "@context/GlobalContext";
+import { CCustBank, CCustomer } from "@type/interfaces/Customer";
+import { CBank } from "@type/interfaces/Combo";
+import { bankFormSchema } from "@utils/validators";
+import { loadCustomerData } from "@services/home.service";
+import { showToast } from "@utils/showToast";
 import {
   checkBankAccName,
   deleteBank,
   makeBankPrimary,
   saveBank,
-} from '@services/basic.service';
-import Header from '@components/Header';
-import CustomScrollView from '@components/CustomScrollView';
-import SettingsInput from '@components/SettingsInput';
-import Button from '@components/Button';
-import SettingsDropdown from '@components/SettingsDropDown';
-import {handleErrorExpo} from '@utils/handleErrorOnExpo';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {cn} from '@utils/cn';
-import SvgIcon from '@components/SvgIcon';
+} from "@services/basic.service";
+import Header from "@components/Header";
+import CustomScrollView from "@components/CustomScrollView";
+import SettingsInput from "@components/SettingsInput";
+import Button from "@components/Button";
+import SettingsDropdown from "@components/SettingsDropDown";
+import { handleErrorExpo } from "@utils/handleErrorOnExpo";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { cn } from "@utils/cn";
+import SvgIcon from "@components/SvgIcon";
 
 const ModifyBank = () => {
   const router = useRouter();
-  const {bank, isDefault} = useLocalSearchParams();
+  const { bank, isDefault } = useLocalSearchParams();
   const [bankData, setBankData] = useState<CCustBank>();
-  const {state, dispatch} = useContext(GlobalContext);
+  const { state, dispatch } = useContext(GlobalContext);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isSettingPrimary, setIsSettingPrimary] = useState(false);
@@ -40,7 +40,7 @@ const ModifyBank = () => {
 
   useEffect(() => {
     if (!state) return;
-    const {comboValue, currentUser} = state;
+    const { comboValue, currentUser } = state;
     setBankComboValues(comboValue.bank);
     setCurrentCustomer(currentUser);
   }, [state]);
@@ -57,19 +57,19 @@ const ModifyBank = () => {
     setValue,
     getValues,
     handleSubmit,
-    formState: {errors},
+    formState: { errors },
   } = useForm({
     resolver: yupResolver(bankFormSchema),
     defaultValues: {
       bank: 0,
-      account: '',
+      account: "",
     },
   });
 
   useEffect(() => {
     if (bankData) {
-      setValue('bank', bankData.BANK_ID);
-      setValue('account', String(bankData.ACC_NO));
+      setValue("bank", bankData.BANK_ID);
+      setValue("account", String(bankData.ACC_NO));
     }
   }, [bankData, setValue, getValues]);
 
@@ -80,29 +80,29 @@ const ModifyBank = () => {
       if (!currentCustomer) return;
       const checkAccNameResult = await checkBankAccName(
         formData.bank,
-        formData.account,
+        formData.account
       );
       if (!checkAccNameResult) return;
 
       const requestData: CCustBank = {
         ...bankData,
         CUST_ID: currentCustomer.CUST_ID,
-        CURR_CODE: 'MNT',
+        CURR_CODE: "MNT",
         ACC_NO: formData.account,
         ACC_NAME: checkAccNameResult.name,
         BANK_ID: formData.bank,
-        IS_DEFAULT: isDefault === 'true' ? 'Y' : 'N',
-        ROW_STATUS: !bankData ? 'I' : 'U',
+        IS_DEFAULT: isDefault === "true" ? "Y" : "N",
+        ROW_STATUS: !bankData ? "I" : "U",
       };
 
       const result = await saveBank(requestData);
       if (!result) return;
 
       await loadCustomerData(dispatch);
-      showToast('Амжилттай', 'Банкны дансыг амжилттай хадгаллаа', 'success');
+      showToast("Амжилттай", "Банкны дансыг амжилттай хадгаллаа", "success");
       router.back();
     } catch (error) {
-      handleErrorExpo(error, 'onSaveBank');
+      handleErrorExpo(error, "onSaveBank");
     } finally {
       setIsSubmitting(false);
     }
@@ -116,11 +116,11 @@ const ModifyBank = () => {
         const result = await deleteBank(bankData.ID);
         if (!result) return;
         await loadCustomerData(dispatch);
-        showToast('Амжилттай', 'Банкны данс устгагдлаа', 'success');
+        showToast("Амжилттай", "Банкны данс устгагдлаа", "success");
         router.back();
       }
     } catch (error) {
-      handleErrorExpo(error, 'handleDeleteBank');
+      handleErrorExpo(error, "handleDeleteBank");
     } finally {
       setIsDeleting(false);
     }
@@ -135,21 +135,21 @@ const ModifyBank = () => {
         if (!result) return;
         await loadCustomerData(dispatch);
         showToast(
-          'Амжилттай',
-          'Банкны дансыг үндсэн дансаар сонголоо',
-          'success',
+          "Амжилттай",
+          "Банкны дансыг үндсэн дансаар сонголоо",
+          "success"
         );
         router.back();
       }
     } catch (error) {
-      handleErrorExpo(error, 'handlePrimaryBank');
+      handleErrorExpo(error, "handlePrimaryBank");
     } finally {
       setIsSettingPrimary(false);
     }
   };
 
   return (
-    <View className="flex-1 bg-bgPrimary" style={{paddingTop: insets.top}}>
+    <View className="flex-1 bg-bgPrimary" style={{ paddingTop: insets.top }}>
       <Header
         title="Банкны данс холбох"
         onBack={() => router.back()}
@@ -171,7 +171,7 @@ const ModifyBank = () => {
             <Controller
               control={control}
               name="bank"
-              render={({field: {onChange, value}}) => (
+              render={({ field: { onChange, value } }) => (
                 <SettingsDropdown
                   disabled={isSubmitting}
                   title="Сонгох банк"
@@ -184,19 +184,21 @@ const ModifyBank = () => {
                   renderItem={(item, selected) => (
                     <View
                       className={cn(
-                        'flex-row items-center justify-start gap-4 rounded-lg p-3',
-                        selected ? 'bg-[#A069F970]' : 'bg-transparent',
-                      )}>
+                        "flex-row items-center justify-start gap-4 rounded-lg p-3",
+                        selected ? "bg-[#A069F970]" : "bg-transparent"
+                      )}
+                    >
                       <Image
-                        source={{uri: item.LOGO_URL}}
+                        source={{ uri: item.LOGO_URL }}
                         resizeMode="contain"
                         className="h-6 w-6"
                       />
                       <Text
                         className={cn(
-                          'text-base text-white',
-                          selected ? 'font-bold' : 'font-normal',
-                        )}>
+                          "text-base text-white",
+                          selected ? "font-bold" : "font-normal"
+                        )}
+                      >
                         {item.BANK_NAME}
                       </Text>
                     </View>
@@ -208,7 +210,7 @@ const ModifyBank = () => {
             <Controller
               control={control}
               name="account"
-              render={({field: {onChange, value}}) => (
+              render={({ field: { onChange, value } }) => (
                 <SettingsInput
                   readonly={isSubmitting}
                   label="Банкны IBAN"
@@ -232,7 +234,7 @@ const ModifyBank = () => {
         </View>
 
         <View className="mx-4 mt-10 space-y-2">
-          {bankData?.IS_DEFAULT === 'N' && (
+          {bankData?.IS_DEFAULT === "N" && (
             <>
               <Button
                 isLoading={isDeleting}

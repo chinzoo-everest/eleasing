@@ -1,34 +1,60 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TouchableOpacity, View, Text } from "react-native";
-import {
-  getProductColorByType,
-  getProductTextColorByType,
-} from "utils/getProductColor";
 import { MotiView } from "moti";
 import { cn } from "@utils/cn";
 
+type LayoutType = "first" | "second";
+
 type PaymentTabProps = {
-  prodType: number;
+  prodType?: number;
   paddingContainer?: string;
   view1: React.ReactNode;
   view2: React.ReactNode;
   text1?: string;
   text2?: string;
+  remainingPre?: number;
+  remainingFee?: number;
+  disableView2?: boolean;
+  initialIndex?: 0 | 1;
+  onTabChange?: (index: 0 | 1) => void;
 };
 
-const PaymentTab = ({
+const PaymentTab: React.FC<PaymentTabProps> = ({
   prodType,
   view1,
   view2,
   paddingContainer,
   text1 = "Шууд төлөх",
   text2 = "Дансаар төлөх",
-}: PaymentTabProps) => {
-  const [layout, setLayout] = useState<string>("first");
+  remainingPre = 0,
+  remainingFee = 0,
+  disableView2 = false,
+  initialIndex = 0,
+  onTabChange,
+}) => {
+  const computedDisableView2 =
+    disableView2 || remainingPre > 0 || remainingFee > 0;
 
-  const handleLayoutChange = (chosenLayout: string) => {
+  const [layout, setLayout] = useState<LayoutType>(
+    computedDisableView2 && initialIndex === 1
+      ? "first"
+      : initialIndex === 1
+        ? "second"
+        : "first"
+  );
+
+  useEffect(() => {
+    if (computedDisableView2 && layout === "second") {
+      setLayout("first");
+      onTabChange?.(0);
+    }
+  }, [computedDisableView2, layout, onTabChange]);
+
+  const handleLayoutChange = (chosenLayout: LayoutType): void => {
     if (chosenLayout === layout) return;
+    if (chosenLayout === "second" && computedDisableView2) return;
     setLayout(chosenLayout);
+    onTabChange?.(chosenLayout === "first" ? 0 : 1);
   };
 
   return (
@@ -36,48 +62,43 @@ const PaymentTab = ({
       <MotiView
         from={{ opacity: 0, translateY: 20 }}
         animate={{ opacity: 1, translateY: 0 }}
-        transition={{
-          type: "timing",
-          duration: 600,
-          delay: 200,
-        }}
+        transition={{ type: "timing", duration: 600, delay: 200 }}
         className="mt-5"
       >
-        <View className="h-14 flex-row rounded-full bg-[#fff]">
+        <View className="h-14 flex-row rounded-full bg-white shadow-lg">
           <TouchableOpacity
-            style={{
-              backgroundColor: layout === "first" ? "#EBF6FC" : "",
-              margin: 0,
-              flex: 1,
-              borderRadius: 23,
-            }}
-            className="items-center justify-center"
+            className={cn(
+              "flex-1 items-center justify-center rounded-full",
+              layout === "first" ? "bg-[#2A45C4]" : ""
+            )}
             onPress={() => handleLayoutChange("first")}
+            activeOpacity={0.8}
           >
             <Text
-              className="text-sm font-semibold"
-              style={{
-                color: layout === "first" ? "#1B3C69" : "#9CA3AF",
-              }}
+              className={cn(
+                "text-sm font-semibold",
+                layout === "first" ? "text-[#fff]" : "text-[#9CA3AF]"
+              )}
             >
               {text1}
             </Text>
           </TouchableOpacity>
+
           <TouchableOpacity
-            style={{
-              backgroundColor: layout === "second" ? "#EBF6FC" : "#",
-              margin: 0,
-              flex: 1,
-              borderRadius: 23,
-            }}
-            className="items-center justify-center"
+            className={cn(
+              "flex-1 items-center justify-center rounded-full",
+              layout === "second" ? "bg-[#2A45C4]" : "",
+              computedDisableView2 ? "opacity-40" : ""
+            )}
             onPress={() => handleLayoutChange("second")}
+            activeOpacity={computedDisableView2 ? 1 : 0.8}
+            disabled={computedDisableView2}
           >
             <Text
-              className="text-sm font-semibold"
-              style={{
-                color: layout === "second" ? "#1B3C69" : "#9CA3AF",
-              }}
+              className={cn(
+                "text-sm font-semibold",
+                layout === "second" ? "text-[#fff]" : "text-[#9CA3AF]"
+              )}
             >
               {text2}
             </Text>
@@ -90,15 +111,8 @@ const PaymentTab = ({
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            exit={{
-              opacity: 0,
-              translateY: -20,
-            }}
-            transition={{
-              type: "timing",
-              duration: 400,
-              delay: 150,
-            }}
+            exit={{ opacity: 0, translateY: -20 }}
+            transition={{ type: "timing", duration: 400, delay: 150 }}
             className="flex-1"
             key="view1"
           >
@@ -108,15 +122,8 @@ const PaymentTab = ({
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            exit={{
-              opacity: 0,
-              translateY: -20,
-            }}
-            transition={{
-              type: "timing",
-              duration: 400,
-              delay: 150,
-            }}
+            exit={{ opacity: 0, translateY: -20 }}
+            transition={{ type: "timing", duration: 400, delay: 150 }}
             className="flex-1"
             key="view2"
           >

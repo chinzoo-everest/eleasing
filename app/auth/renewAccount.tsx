@@ -98,7 +98,7 @@ const RenewAccount = () => {
         <View className="flex-1 items-center justify-start px-6 mt-4">
           {/* Illustration */}
           <Image
-            source={require("@assets/images/reset_phone.png")}
+            source={require("@assets/images/reset_account.png")}
             style={{ width: 240, height: 240, marginBottom: 20 }}
             resizeMode="contain"
           />

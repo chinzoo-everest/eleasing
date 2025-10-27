@@ -8,7 +8,7 @@ export const getProductColorByType = (prodType: number) => {
   } else if (prodType === Config.PHONE_PROD_TYPE) {
     return "#FF594F";
   } else {
-    return "#1B3C69";
+    return "#2A45C4";
   }
 };
 
