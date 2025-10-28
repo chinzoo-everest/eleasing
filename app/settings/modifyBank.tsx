@@ -149,22 +149,24 @@ const ModifyBank = () => {
   };
 
   return (
-    <View className="flex-1 bg-bgPrimary" style={{ paddingTop: insets.top }}>
+    <View className="flex-1 bg-white" style={{ paddingTop: insets.top }}>
       <Header
-        title="Банкны данс холбох"
+        title="Банкны данс"
         onBack={() => router.back()}
-        bgColor="#24292D"
+        bgColor="white"
+        showBottomLine={false}
+        textColor="#1B3C69"
       />
       <CustomScrollView className="pt-6">
         <View className="flex-1 items-center px-4">
-          <View className="h-28 w-28 items-center justify-center rounded-full border border-dashed border-[#6265FE]">
-            <SvgIcon name="warning" width={50} height={50} color="#6265FE" />
+          <View className="h-28 w-28 items-center justify-center rounded-full border border-dashed border-[#1B3C69]">
+            <SvgIcon name="warning" width={50} height={50} />
           </View>
-          <Text className="mt-6 text-xl font-bold text-white">
-            Банкны данс холбох
+          <Text className="mt-6 text-xl font-bold text-[#1B3C69]">
+            Банкны данс
           </Text>
-          <Text className="mt-2 text-center text-sm text-white opacity-70">
-            Хэрэглэгчийн үйлдэлтэй холбоотой анхааруулга энд харагдана.
+          <Text className="mt-2 text-center text-sm text-[#1B3C69] opacity-70">
+            Зөвхөн өөрийн нэр дээр бүртгэлтэй дансыг бүртгүүлнэ үү.
           </Text>
 
           <View className="mt-10 w-full">
@@ -174,7 +176,7 @@ const ModifyBank = () => {
               render={({ field: { onChange, value } }) => (
                 <SettingsDropdown
                   disabled={isSubmitting}
-                  title="Сонгох банк"
+                  title="Банк сонгох"
                   errorString={errors.bank?.message}
                   items={bankComboValues ?? []}
                   selectedValue={value}
@@ -185,7 +187,7 @@ const ModifyBank = () => {
                     <View
                       className={cn(
                         "flex-row items-center justify-start gap-4 rounded-lg p-3",
-                        selected ? "bg-[#A069F970]" : "bg-transparent"
+                        selected ? "bg-[#fff]" : "bg-transparent"
                       )}
                     >
                       <Image
@@ -195,7 +197,7 @@ const ModifyBank = () => {
                       />
                       <Text
                         className={cn(
-                          "text-base text-white",
+                          "text-base text-black",
                           selected ? "font-bold" : "font-normal"
                         )}
                       >
@@ -213,8 +215,9 @@ const ModifyBank = () => {
               render={({ field: { onChange, value } }) => (
                 <SettingsInput
                   readonly={isSubmitting}
-                  label="Банкны IBAN"
+                  label="Банкны данс"
                   keyboard="number-pad"
+                  placeholder="0000 000000"
                   value={value}
                   errorString={errors.account?.message}
                   onChangeText={onChange}
@@ -242,7 +245,8 @@ const ModifyBank = () => {
                 onPress={handleDeleteBank}
                 isSecondary
                 text="Устгах"
-                fillColor="#222630"
+                fillColor="#1B3C69"
+                textColor="white"
               />
               <Button
                 className="mt-2"
@@ -251,16 +255,18 @@ const ModifyBank = () => {
                 onPress={handlePrimaryBank}
                 isSecondary
                 text="Үндсэн данс болгох"
-                fillColor="#222630"
+                fillColor="#2A45C4"
               />
             </>
           )}
           <Button
             className="mt-2"
+            textColor="white"
             isLoading={isSubmitting}
             disabled={isSubmitting || isDeleting || isSettingPrimary}
             onPress={handleSubmit(onSaveBank)}
             text="Баталгаажуулах"
+            fillColor="#65E33F"
           />
         </View>
       </CustomScrollView>

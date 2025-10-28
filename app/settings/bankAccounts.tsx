@@ -58,12 +58,14 @@ const BankAccounts: React.FC = () => {
   };
 
   return (
-    <View className="flex-1 bg-HDefault">
-      <View className="bg-[#EBF6F3]" style={{ paddingTop: insets.top }} />
+    <View className="flex-1 bg-white">
+      <View className="bg-white" style={{ paddingTop: insets.top }} />
       <Header
         title="Банкны данс"
+        showBottomLine={false}
         onBack={() => router.back()}
-        bgColor="#EBF6F3"
+        bgColor="#fff"
+        textColor="#1B3C69"
       />
       <CustomScrollView className="px-4">
         {hasNoBanks ? (
@@ -81,17 +83,17 @@ const BankAccounts: React.FC = () => {
                 </Text>
                 <TouchableOpacity
                   onPress={() => handleEditBank(defaultBank)}
-                  className="flex-row items-center rounded-lg border border-[#7AB49B] px-4 py-4"
+                  className="flex-row items-center rounded-lg border border-[#1B3C69] px-4 py-4"
                 >
-                  <View className="h-10 w-10 items-center justify-center rounded-full bg-[#EAF2F1]">
+                  {/* <View className="h-10 w-10 items-center justify-center rounded-full bg-[#EAF2F1]">
                     <Image
                       source={{ uri: defaultBank.LOGO_URL }}
                       className="h-6 w-6 rounded-full"
                       resizeMode="contain"
                     />
-                  </View>
+                  </View> */}
                   <View className="ml-3 flex-1">
-                    <Text className="text-base font-medium text-[#3B8361]">
+                    <Text className="text-base font-medium text-[#1B3C69]">
                       {getBankName(defaultBank.L_CODE || "")}
                     </Text>
                     <Text className="text-lg font-semibold text-black">
@@ -117,15 +119,8 @@ const BankAccounts: React.FC = () => {
                     }
                     className="mb-3 flex-row items-center rounded-lg border border-gray-300 px-4 py-4"
                   >
-                    <View className="h-10 w-10 items-center justify-center rounded-full bg-[#EAF2F1]">
-                      <Image
-                        source={{ uri: bank.LOGO_URL }}
-                        className="h-6 w-6 rounded-full"
-                        resizeMode="contain"
-                      />
-                    </View>
                     <View className="ml-3 flex-1">
-                      <Text className="text-base font-medium text-[#3B8361]">
+                      <Text className="text-base font-medium text-[#1B3C69]">
                         {getBankName(bank.L_CODE || "")}
                       </Text>
                       <Text className="text-lg font-semibold text-black">
@@ -141,7 +136,7 @@ const BankAccounts: React.FC = () => {
 
         <View className="mx-4 mt-6">
           <TouchableOpacity
-            className="flex-row items-center justify-center rounded border border-dashed border-[#3DA48D] px-4 py-2"
+            className="flex-row items-center justify-center rounded border border-dashed border-[#2A45C4] px-4 py-2"
             onPress={async () =>
               await routePush(SCREENS.MODIFY_BANK, {
                 bank: JSON.stringify(null),
@@ -150,7 +145,7 @@ const BankAccounts: React.FC = () => {
             accessibilityRole="button"
             accessibilityLabel="Данс нэмэх"
           >
-            <Text className="text-center text-4xl font-extralight text-[#3DA48D]">
+            <Text className="text-center text-4xl font-extralight text-[#2A45C4]">
               +
             </Text>
           </TouchableOpacity>

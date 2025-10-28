@@ -79,11 +79,11 @@ const styles = StyleSheet.create({
   titleText: {
     fontWeight: "bold",
     fontSize: 14,
-    color: "black",
+    color: "white",
   },
   messageText: {
     fontSize: 14,
-    color: "black",
+    color: "white",
     opacity: 0.8,
     marginTop: 5,
   },
@@ -93,13 +93,17 @@ const toastConfig = {
   success: (props: BaseToastProps) => (
     <Toast
       {...props}
-      gradientColors={["#fff", "#fff"]}
-      shadowColor="#fff"
+      gradientColors={["#2A45C4", "#2A45C4"]}
+      shadowColor="#000"
       marginTop
     />
   ),
   error: (props: BaseToastProps) => (
-    <Toast {...props} gradientColors={["#fff", "#fff"]} shadowColor="#fff" />
+    <Toast
+      {...props}
+      gradientColors={["#2A45C4", "#2A45C4"]}
+      shadowColor="#000"
+    />
   ),
   info: (props: BaseToastProps) => (
     <Toast

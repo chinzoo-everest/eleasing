@@ -49,7 +49,7 @@ const SettingsDropdown = forwardRef<any, Props>(
       return {
         borderWidth: withTiming(isFocused.value ? 2 : 1, { duration: 200 }),
         borderColor: withTiming(
-          isFocused.value ? focusColor || "#6265FE" : "#FFFFFF99",
+          isFocused.value ? focusColor || "#2A45C4" : "#6972B266",
           { duration: 200 }
         ),
       };
@@ -62,7 +62,7 @@ const SettingsDropdown = forwardRef<any, Props>(
         ref={ref}
       >
         {title && (
-          <Text className={cn("mb-1.5 text-sm text-white")}>{title}</Text>
+          <Text className={cn("mb-1.5 text-sm text-[#1B3C69]")}>{title}</Text>
         )}
         <Animated.View
           style={[
@@ -73,7 +73,7 @@ const SettingsDropdown = forwardRef<any, Props>(
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              backgroundColor: backgroundColor || "#24292D",
+              backgroundColor: backgroundColor || "#fff",
             },
           ]}
         >
@@ -81,14 +81,14 @@ const SettingsDropdown = forwardRef<any, Props>(
             ref={dropDownRef}
             disable={disabled}
             placeholder=""
-            activeColor="#141414"
+            activeColor="#fff"
             renderItem={(item, selected) => {
               if (renderItem) return renderItem(item, selected);
               return (
                 <View
                   className={cn(
                     "flex-row items-center justify-between rounded-lg p-2.5",
-                    selected ? "bg-[#2A2C33]" : "bg-transparent"
+                    selected ? "bg-[#fff]" : "bg-transparent"
                   )}
                 >
                   <Text className="text-base text-white">
@@ -99,15 +99,15 @@ const SettingsDropdown = forwardRef<any, Props>(
             }}
             style={{
               flex: 1,
-              backgroundColor: backgroundColor || "#24292D",
+              backgroundColor: backgroundColor || "#fff",
             }}
             iconStyle={{ marginRight: 15 }}
             selectedTextStyle={{
               textAlign: "left",
               fontSize: 16,
               paddingHorizontal: 15,
-              color: "#ffffff",
-              backgroundColor: backgroundColor || "#24292D",
+              color: "#000",
+              backgroundColor: backgroundColor || "#fff",
             }}
             itemTextStyle={{
               textAlign: "left",
@@ -117,7 +117,7 @@ const SettingsDropdown = forwardRef<any, Props>(
             containerStyle={{
               width: "90%",
               borderRadius: 8,
-              backgroundColor: backgroundColor || "#24292D",
+              backgroundColor: backgroundColor || "#fff",
             }}
             itemContainerStyle={{
               borderRadius: 8,

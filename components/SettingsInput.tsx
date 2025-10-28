@@ -129,7 +129,7 @@ const SettingsInput = forwardRef(
       return {
         borderWidth: withTiming(isFocused.value ? 2 : 1, { duration: 200 }),
         borderColor: withTiming(
-          isFocused.value ? focusColor || "#6265FE" : "#FFFFFF99",
+          isFocused.value ? focusColor || "#2A45C4" : "#6972B266",
           {
             duration: 200,
           }
@@ -202,14 +202,14 @@ const SettingsInput = forwardRef(
             textInputRef.current?.focus();
           }}
         >
-          <Text className={cn("mb-1.5 text-sm text-white")}>{label}</Text>
+          <Text className={cn("mb-1.5 text-sm text-[#1B3C69]")}>{label}</Text>
           <Animated.View
             style={[
               borderAnimatedStyle,
               {
                 flexDirection: "row",
                 alignItems: "center",
-                backgroundColor: backgroundColor || "#24292D",
+                backgroundColor: backgroundColor || "#fff",
                 marginBottom: -25,
                 borderRadius: 8,
                 padding: 1,
@@ -222,7 +222,7 @@ const SettingsInput = forwardRef(
               onChangeText={handleChangeText}
               onBlur={handleBlur}
               placeholder={placeholder}
-              selectionColor={focusColor || "#9C4FDD"}
+              selectionColor={focusColor || "#001165"}
               placeholderTextColor={placeholderTextColor}
               maxLength={undefined} // Remove maxLength from TextInput
               autoCapitalize={autocapitalz ? "characters" : "sentences"}
@@ -232,7 +232,7 @@ const SettingsInput = forwardRef(
               placeholderClassName="text-lg leading-6"
               className="h-[40px] w-full flex-1 text-lg leading-6"
               onFocus={() => (isFocused.value = 1)}
-              style={{ color: "#FFFFFF", marginLeft: 8, marginBottom: 6 }}
+              style={{ color: "#000", marginLeft: 8, marginBottom: 6 }}
             />
             {mode === "password" && (
               <TouchableOpacity

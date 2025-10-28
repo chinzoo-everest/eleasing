@@ -163,7 +163,7 @@ const VerifyOTP = () => {
           </Text>
           <Text className="mt-3 text-center text-sm text-[#1B3C69] opacity-60">
             ****{typeof phoneNo === "string" ? phoneNo.slice(-4) : ""} дугаарт
-            илгээсэн баталгаажуулах{"\n"}5 оронтой кодыг оруулна уу
+            илгээсэн баталгаажуулах{"\n"}6 оронтой кодыг оруулна уу
           </Text>
 
           <View className="mt-10 w-full items-center">

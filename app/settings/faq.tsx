@@ -105,14 +105,12 @@ const Faq: React.FC = () => {
         textColor="#1B3C69"
         onBack={() => router.back()}
       />
-      {/* Subtitle */}
+      
       <View className="px-4 pt-2"></View>
-      {/* Search */}
+      
       <View className="px-4 pt-5">
         <View className="flex-row items-center rounded-full bg-[#F2F6FC] px-4 py-3 shadow-sm shadow-black/5">
-          <View className="mr-2">
-            <SvgIcon name="search" width={18} height={18} color="#99A7BF" />
-          </View>
+          
           <TextInput
             value={query}
             onChangeText={setQuery}
