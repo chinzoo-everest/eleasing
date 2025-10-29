@@ -31,6 +31,7 @@ export enum SCREENS {
   LOAN_ARCHIVE = "settings/archive",
   LOAN_CALCULATOR = "settings/calculator",
   GET_LOAN_MULTIPLE_FORMS = "settings/getloanMultipleForms",
+  EBARIMT = "settings/ebarimtHistory",
 
   // contract
   CONTRACT = "contract/contract",

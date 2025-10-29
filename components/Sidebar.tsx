@@ -14,6 +14,8 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import SvgIcon from "@components/SvgIcon";
 import { GlobalContext } from "@context/GlobalContext";
+import * as Application from "expo-application";
+
 import { CCustomer } from "@type/interfaces/Customer";
 import { routePush } from "@utils/routePush";
 import { LogOutUser } from "@services/auth.service";
@@ -93,15 +95,17 @@ const Sidebar = ({
               {currentCustomer?.AVATAR_URL ? (
                 <Image
                   source={{ uri: currentCustomer?.AVATAR_URL }}
-                  className="h-16 w-16"
+                  className="h-16 w-16 rounded-3xl"
                 />
               ) : (
-                <SvgIcon
-                  name="settings_user"
-                  height={63}
-                  width={63}
-                  color="#1E3AFF"
-                />
+                <View className="rounded-xl">
+                  <SvgIcon
+                    name="settings_user"
+                    height={63}
+                    width={63}
+                    color="#1E3AFF"
+                  />
+                </View>
               )}
             </View>
             <View className="flex-col self-center">
@@ -131,10 +135,16 @@ const Sidebar = ({
                   onPress={() => handleNavigate(SCREENS.LOAN_ARCHIVE)}
                 />
                 <SidebarItem
+                  icon="archive"
+                  text="И-Баримт түүх"
+                  onPress={() => handleNavigate(SCREENS.EBARIMT)}
+                />
+                <SidebarItem
                   icon="terms"
                   text="Банкны данс"
                   onPress={() => handleNavigate(SCREENS.BANK)}
                 />
+
                 <SidebarItem
                   icon="faq"
                   text="Асуулт хариулт"
@@ -192,6 +202,26 @@ const Sidebar = ({
                     Гарах
                   </Text>
                 </TouchableOpacity>
+                <View className="mt-5 flex flex-row items-center justify-center">
+                  <Text className="text-primary text-xs opacity-80">
+                    Developed by
+                  </Text>
+                  <TouchableOpacity
+                    onPress={() =>
+                      Linking.openURL("https://everestsolution.mn/")
+                    }
+                  >
+                    <Text className="text-primary text-xs font-bold opacity-80">
+                      {" "}
+                      {"Everest Solution LLC"}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <Text className="mb-20 mt-2.5 text-center text-xs text-black opacity-60">
+                  {Application.nativeApplicationVersion} {" ("}
+                  {Application.nativeBuildVersion}
+                  {")"}
+                </Text>
               </View>
             </ScrollView>
           </View>
